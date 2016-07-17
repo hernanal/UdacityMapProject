@@ -29,6 +29,7 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
   </head>
 
   <body>
@@ -56,13 +57,26 @@
 
     <div class="container">
 
-      <div class="main">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
+      <div class="main" id="map"></div>
 
     </div><!-- /.container -->
 
+  <script>
+       // TODO: Create a map variable
+       var map;
+
+       // TODO: Complete the following function to initialize the map
+       function initMap() {
+         // TODO: use a constructor to create a new map JS object. You can use the coordinates
+         // we used, 40.7413549, -73.99802439999996 or your own!
+         map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.4458893, lng: -74.52377100000001},
+          zoom: 13
+         });
+       }
+  </script>
+
+   <script async def src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&v=3&callback=initMap"></script>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -72,5 +86,11 @@
     <script src="bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- Core JavaScript for everything else -->
+<!--     <script src="js/app2.js"></script>
+    <script src="js/app.js"></script>
+ --><!--     <script src="js/lib/knockout-3.4.0.js"></script>
+ -->    
   </body>
 </html>
