@@ -7,10 +7,149 @@ var map;
 var markers = [];
 
 function initMap() {
+	// https://snazzymaps.com/style/70/unsaturated-browns
+	var styles = [
+		{
+			"elementType":"geometry",
+			"stylers":[
+				{
+					"hue":"#ff4400"
+				},
+				{
+					"saturation":-68
+				},
+				{
+					"lightness":-4
+				},
+				{
+					"gamma":0.72
+				}
+			]
+		},
+		{
+			"featureType":"road",
+			"elementType":"labels.icon"
+		},
+		{
+			"featureType":"landscape.man_made",
+			"elementType":"geometry",
+			"stylers":[
+				{
+					"hue":"#0077ff"
+				},
+				{
+					"gamma":3.1
+				}
+			]
+		},
+		{
+			"featureType":"water",
+			"stylers":[
+				{
+					"hue":"#00ccff"
+				},
+				{
+					"gamma":0.44
+				},
+				{"saturation":-33
+				}
+			]
+		},
+		{
+			"featureType":"poi.park",
+			"stylers":[
+				{
+					"hue":"#44ff00"
+				},
+				{
+					"saturation":-23
+				}
+			]
+		},
+		{
+			"featureType":"water",
+			"elementType":"labels.text.fill",
+			"stylers":[
+				{
+					"hue":"#007fff"
+				},
+				{
+					"gamma":0.77
+				},
+				{
+					"saturation":65
+				},
+				{
+					"lightness":99
+				}
+			]
+		},
+		{
+			"featureType":"water",
+			"elementType":"labels.text.stroke",
+			"stylers":[
+				{
+					"gamma":0.11
+				},
+				{
+					"weight":5.6
+				},
+				{
+					"saturation":99
+				},
+				{
+					"hue":"#0091ff"
+				},
+				{
+					"lightness":-86
+				}
+			]
+		},
+		{
+			"featureType":"transit.line",
+			"elementType":"geometry",
+			"stylers":[
+				{
+					"lightness":-48
+				},
+				{
+					"hue":"#ff5e00"
+				},
+				{
+					"gamma":1.2
+				},
+				{
+					"saturation":-23
+				}
+			]
+		},
+		{
+			"featureType":"transit",
+			"elementType":"labels.text.stroke",
+			"stylers":[
+				{
+					"saturation":-64
+				},
+				{
+					"hue":"#ff9100"
+				},
+				{
+					"lightness":16
+				},
+				{
+					"gamma":0.47
+				},
+				{
+					"weight":2.7
+				}
+			]
+		}
+	]
 	// Tell the API where to create the map
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 40.750568, lng: -73.99351899999999},
-		zoom: 13
+		zoom: 13,
+		styles: styles
 	});
 	// Create the first marker
 	// var home =	{lat: 40.4458893, lng: -74.52377100000001};
@@ -59,11 +198,21 @@ function initMap() {
 		{
 			title: 'The Back Room',
 			location: {lat: 40.7187348, lng: -73.98694309999996}
-		}		
+		},
+	    {
+	    	title: 'Park Ave Penthouse', 
+	    	location: {lat: 40.7713024, lng: -73.9632393}
+	    }		
 	];
 
 	var infoWindow = new google.maps.InfoWindow();
 	var bounds = new google.maps.LatLngBounds();
+
+	// Style the speakeasy icon
+	var defaultIcon = makeMarkerIcon('0091ff');
+
+	// Change the color of the icon when the mouse is over it
+	var highlightIcon = makeMarkerIcon('FFFF24');
 
 	// Loop through and create markers for each speakeasy object using 
 	// the locations array when the app loads.
@@ -87,6 +236,14 @@ function initMap() {
 			fillInfoWindow(this, infoWindow);
 		});
 		bounds.extend(markers[i].position);
+
+		// Click events for icons during mouseover and mouseout
+		marker.addListener('mouseover', function() {
+			this.setIcon(highlightIcon);
+		});
+		marker.addListener('mouseout', function() {
+			this.setIcon(defaultIcon);
+		});
 	}
 	// Extend the boundaries of the map for each marker
 	map.fitBounds(bounds);
@@ -95,12 +252,48 @@ function initMap() {
 function fillInfoWindow(marker, infowindow) {
 	// First check to make sure the infowindow is already open
 	if(infowindow.marker != marker) {
+		// Clear the infowindow content to give streetview time to load
+		infowindow.setContent('');
 		infowindow.marker = marker;
-		infowindow.setContent('<div>' + marker.title + '</div>');
-		infowindow.open(map, marker);
+		// infowindow.open(map, marker);
 		// Clear marker property when window is closed
 		infowindow.addListener('closeclick', function() {
-			infowindow.setMarker(null);
+			infowindow.marker = null;
 		});
+		var streetViewService = new google.maps.StreetViewService();
+		var radius = 50;
+
+		// If the pano is found, compute position of the streetview image,
+		// then calculate heading, get the pano and set options
+		function getStreetView(data, status) {
+			if(status == google.maps.StreetViewStatus.OK) {
+				var nearStreetViewLocation = data.location.latLng;
+				var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+					infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+					var panoramaOptions = {
+						position: nearStreetViewLocation,
+						pov: {
+							heading: heading,
+							pitch: 0
+						}
+					};
+				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+			} else {
+				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
+			}
+		}
+		// Use the streetview to get an image witin 50 meters of the marker
+		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+		infowindow.open(map, marker);
 	}
+}
+
+function makeMarkerIcon(markerColor) {
+	var markerImage = new google.maps.MarkerImage('http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+          '|40|_|%E2%80%A2',
+          new google.maps.Size(21, 34),
+          new google.maps.Point(0, 0),
+          new google.maps.Point(10,34),
+          new google.maps.Size(21, 34));
+	return markerImage;
 }
