@@ -146,43 +146,53 @@ var model = {
 	locations: [
 		{
 			title: 'Raines Law Room',
-			location: {lat: 40.73871310000001, lng: -73.99460060000001}
+			location: {lat: 40.73871310000001, lng: -73.99460060000001},
+			placeId: 'ChIJ8wOZzaJZwokR6impURvzUbE'
 		},
 		{
 			title: 'Please Don’t Tell',
-			location: {lat: 40.72716399999999, lng: -73.98371500000002}
+			location: {lat: 40.72716399999999, lng: -73.98371500000002},
+			placeId: 'ChIJb67-ZZ1ZwokRRxBYr3GlFp0'
 		},
 		{
 			title: 'Employees Only',
-			location: {lat: 40.7334327, lng: -74.0060815}
+			location: {lat: 40.7334327, lng: -74.0060815},
+			placeId: 'ChIJLztrVJNZwokRTmcQJheGNR4'
 		},
 		{
 			title: 'Dear Irving',
-			location: {lat: 40.7362291, lng: -73.9874304}
+			location: {lat: 40.7362291, lng: -73.9874304},
+			placeId: 'ChIJN40c3qFZwokRXMy2Eb1vKj8'
 		},
 		{
-			title: 'Death & Co',
-			location: {lat: 40.7259632, lng: -73.98462059999997}
+			title: 'Death & Company',
+			location: {lat: 40.7259632, lng: -73.98462059999997},
+			placeId: 'ChIJKU1MNJ1ZwokRQ7eiWK511vI'
 		},
 		{
-			title: 'Apothéke',
-			location: {lat: 40.7143818, lng: -73.99818290000002}
+			title: 'Apothéke the bar',
+			location: {lat: 40.7143818, lng: -73.99818290000002},
+			placeId: 'ChIJNxEu8SZawokRARkMLjXhyBY'
 		},
 		{
 			title: 'Little Branch',
-			location: {lat: 40.7299746, lng: -74.00504910000001}
+			location: {lat: 40.7299746, lng: -74.00504910000001},
+			placeId: 'ChIJnU-H6pJZwokRTY65hSqpNs8'
 		},
 		{
 			title: 'Middle Branch',
-			location: {lat: 40.7452845, lng: -73.97946159999998}
+			location: {lat: 40.7452845, lng: -73.97946159999998},
+			placeId: 'ChIJW9_FLwZZwokRTb3xWwh9tDs'
 		},
 		{
 			title: 'Nitecap',
-			location: {lat: 40.7199088, lng: -73.98718259999998}
+			location: {lat: 40.7199088, lng: -73.98718259999998},
+			placeId: 'ChIJYVwmFYFZwokRuSJWe5CgaNw'
 		},
 		{
-			title: 'The Back Room',
-			location: {lat: 40.7187348, lng: -73.98694309999996}
+			title: 'Back Room',
+			location: {lat: 40.7187348, lng: -73.98694309999996},
+			placeId: 'ChIJnY19HoFZwokRfs9FwDLVRKw'
 		},
 	    // {
 	    // 	title: 'Park Ave Penthouse', 
@@ -209,7 +219,7 @@ var octopus = {
 		// First check to make sure the infowindow is already open
 		if(infowindow.marker != marker) {
 			// Clear the infowindow content to give streetview time to load
-			infowindow.setContent('');
+			infowindow.setContent(address);
 			infowindow.marker = marker;
 			// infowindow.open(map, marker);
 			// Clear marker property when window is closed
@@ -220,13 +230,28 @@ var octopus = {
 			var streetViewService = new google.maps.StreetViewService();
 			var radius = 50;
 
+			// Get details about location
+			var address, hours, phone;
+			var request = {placeId: marker.placeId};
+			service = new google.maps.places.PlacesService(map);
+			service.getDetails(request, function(place, status) {
+			  if (status == google.maps.places.PlacesServiceStatus.OK) {
+			    // console.log(place.name);
+			    // console.log(place.formatted_address);
+			    address = place.formatted_address;
+			    phone = place.formatted_phone_number;
+			    hours = place.opening_hours.weekday_text;
+			    console.log(hours);
+			  }
+			});
+
 			// If the pano is found, compute position of the streetview image,
 			// then calculate heading, get the pano and set options
 			function getStreetView(data, status) {
 				if(status == google.maps.StreetViewStatus.OK) {
 					var nearStreetViewLocation = data.location.latLng;
 					var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-						infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+						infowindow.setContent('<div><strong>' + marker.title + '</strong></div><div id="pano"></div><br><div class="info-window">Address: ' + address + '</div><br><div>Phone number: ' + phone + '</div><br><div class="info-window">Hours: ' + hours + '</div>');
 						var panoramaOptions = {
 							position: nearStreetViewLocation,
 							pov: {
@@ -234,6 +259,7 @@ var octopus = {
 								pitch: 0
 							}
 						};
+						// NEED TO HANDLE POSSIBLE ERROR
 					var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
 				} else {
 					infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
@@ -285,7 +311,8 @@ var viewMap = {
 				title: title,
 				animation: google.maps.Animation.DROP,
 				id: i,
-				icon: barIcon
+				icon: barIcon,
+				placeId: locations[i].placeId
 			});
 			// Put the new marker into our markers array
 			markers.push(marker);
