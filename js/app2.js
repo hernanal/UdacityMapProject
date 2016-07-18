@@ -215,6 +215,7 @@ var octopus = {
 			// Clear marker property when window is closed
 			infowindow.addListener('closeclick', function() {
 				infowindow.marker = null;
+				marker.setAnimation(null);
 			});
 			var streetViewService = new google.maps.StreetViewService();
 			var radius = 50;
@@ -242,7 +243,14 @@ var octopus = {
 			streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 			infowindow.open(map, marker);
 		}
-	}
+	},
+	// toggleBounce: function(marker) {
+	// 	if(marker.getAnimation() !== null) {
+	// 		marker.setAnimation(null);
+	// 	} else {
+	// 		marker.setAnimation(google.maps.Animation.BOUNCE);
+	// 	}
+	// } 
 };
 
 var viewMap = {
@@ -261,6 +269,8 @@ var viewMap = {
 		var bounds = new google.maps.LatLngBounds();
 		var locations = octopus.getLocations();
 		var markers = octopus.getMarkers();
+		var barIcon = 'img/bar_icon.svg';
+		var drinkIcon = 'img/drink_icon.svg';
 
 		// Loop through and create markers for each speakeasy object  
 		// using the locations array when the app loads.
@@ -274,23 +284,25 @@ var viewMap = {
 				position: position,
 				title: title,
 				animation: google.maps.Animation.DROP,
-				id: i
+				id: i,
+				icon: barIcon
 			});
 			// Put the new marker into our markers array
 			markers.push(marker);
 			// Give each marker a onclick event to open an info window
 			marker.addListener('click', function() {
 				octopus.fillInfoWindow(this, infoWindow);
+				this.setAnimation(google.maps.Animation.BOUNCE);
 			});
 			bounds.extend(markers[i].position);
 
-			// // Click events for icons during mouseover and mouseout
-			// marker.addListener('mouseover', function() {
-			// 	this.setIcon(highlightIcon);
-			// });
-			// marker.addListener('mouseout', function() {
-			// 	this.setIcon(defaultIcon);
-			// });
+			// Click events for icons during mouseover and mouseout
+			marker.addListener('mouseover', function() {
+				this.setIcon(drinkIcon);
+			});
+			marker.addListener('mouseout', function() {
+				this.setIcon(barIcon);
+			});
 		}
 		// Extend the boundaries of the map for each marker
 		map.fitBounds(bounds);
@@ -309,7 +321,6 @@ var viewMap = {
 	
 
 // 	// Style the speakeasy icon
-// 	var defaultIcon = makeMarkerIcon('0091ff');
 
 // 	// Change the color of the icon when the mouse is over it
 // 	var highlightIcon = makeMarkerIcon('FFFF24');
