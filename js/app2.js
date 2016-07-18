@@ -2,13 +2,12 @@
 
 // Google maps API
 
-var map;
+// var map;
 
 var markers = [];
 
-function initMap() {
-	// https://snazzymaps.com/style/70/unsaturated-browns
-	var styles = [
+var model = {
+	styles: [
 		{
 			"elementType":"geometry",
 			"stylers":[
@@ -144,21 +143,8 @@ function initMap() {
 				}
 			]
 		}
-	]
-	// Tell the API where to create the map
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: 40.750568, lng: -73.99351899999999},
-		zoom: 13,
-		styles: styles
-	});
-	// Create the first marker
-	// var home =	{lat: 40.4458893, lng: -74.52377100000001};
-	// var marker = new google.maps.Marker({
-	// 	position: home,
-	// 	map: map,
-	// 	title: 'Home!'
-	// });
-	var locations = [
+	],
+	locations: [
 		{
 			title: 'Raines Law Room',
 			location: {lat: 40.73871310000001, lng: -73.99460060000001}
@@ -199,101 +185,137 @@ function initMap() {
 			title: 'The Back Room',
 			location: {lat: 40.7187348, lng: -73.98694309999996}
 		},
-	    {
-	    	title: 'Park Ave Penthouse', 
-	    	location: {lat: 40.7713024, lng: -73.9632393}
-	    }		
-	];
+	    // {
+	    // 	title: 'Park Ave Penthouse', 
+	    // 	location: {lat: 40.7713024, lng: -73.9632393}
+	    // }		
+	]
+};
 
-	var infoWindow = new google.maps.InfoWindow();
-	var bounds = new google.maps.LatLngBounds();
+var octopus = {
+	init: function() {
+		viewMap.init();
+	}
+};
 
-	// Style the speakeasy icon
-	var defaultIcon = makeMarkerIcon('0091ff');
+var viewMap = {
+	init: function() {
+		this.render();
+	},
+	render: function() {
+		var map = new google.maps.Map(document.getElementById('map'), {
+			center: {lat: 40.750568, lng: -73.99351899999999},
+			zoom: 13,
+			styles: model.styles
+		});
+	}
+};
+// octopus.init();
 
-	// Change the color of the icon when the mouse is over it
-	var highlightIcon = makeMarkerIcon('FFFF24');
+// function initMap() {
+// 	// https://snazzymaps.com/style/70/unsaturated-browns
+ 
+// 	// Tell the API where to create the map
+// 	// Create the first marker
+// 	// var home =	{lat: 40.4458893, lng: -74.52377100000001};
+// 	// var marker = new google.maps.Marker({
+// 	// 	position: home,
+// 	// 	map: map,
+// 	// 	title: 'Home!'
+// 	// });
+	
 
-	// Loop through and create markers for each speakeasy object using 
-	// the locations array when the app loads.
+// 	var infoWindow = new google.maps.InfoWindow();
+// 	var bounds = new google.maps.LatLngBounds();
 
-	for(var i = 0; i < locations.length; i++) {
+// 	// Style the speakeasy icon
+// 	var defaultIcon = makeMarkerIcon('0091ff');
+
+// 	// Change the color of the icon when the mouse is over it
+// 	var highlightIcon = makeMarkerIcon('FFFF24');
+
+// 	// Loop through and create markers for each speakeasy object using 
+// 	// the locations array when the app loads.
+
+// 	var locationsArray = model.locations;
+
+// 	for(var i = 0; i < locationsArray.length; i++) {
 		
-		var position = locations[i].location;
-		var title = locations[i].title;
+// 		var position = locationsArray[i].location;
+// 		var title = locationsArray[i].title;
 
-		var marker = new google.maps.Marker({
-			map: map,
-			position: position,
-			title: title,
-			animation: google.maps.Animation.DROP,
-			id: i
-		});
-		// Put the new marker into our markers array
-		markers.push(marker);
-		// Give each marker a onclick event to open an info window
-		marker.addListener('click', function() {
-			fillInfoWindow(this, infoWindow);
-		});
-		bounds.extend(markers[i].position);
+// 		var marker = new google.maps.Marker({
+// 			map: map,
+// 			position: position,
+// 			title: title,
+// 			animation: google.maps.Animation.DROP,
+// 			id: i
+// 		});
+// 		// Put the new marker into our markers array
+// 		markers.push(marker);
+// 		// Give each marker a onclick event to open an info window
+// 		marker.addListener('click', function() {
+// 			fillInfoWindow(this, infoWindow);
+// 		});
+// 		bounds.extend(markers[i].position);
 
-		// Click events for icons during mouseover and mouseout
-		marker.addListener('mouseover', function() {
-			this.setIcon(highlightIcon);
-		});
-		marker.addListener('mouseout', function() {
-			this.setIcon(defaultIcon);
-		});
-	}
-	// Extend the boundaries of the map for each marker
-	map.fitBounds(bounds);
-}
+// 		// Click events for icons during mouseover and mouseout
+// 		marker.addListener('mouseover', function() {
+// 			this.setIcon(highlightIcon);
+// 		});
+// 		marker.addListener('mouseout', function() {
+// 			this.setIcon(defaultIcon);
+// 		});
+// 	}
+// 	// Extend the boundaries of the map for each marker
+// 	map.fitBounds(bounds);
+// }
 
-function fillInfoWindow(marker, infowindow) {
-	// First check to make sure the infowindow is already open
-	if(infowindow.marker != marker) {
-		// Clear the infowindow content to give streetview time to load
-		infowindow.setContent('');
-		infowindow.marker = marker;
-		// infowindow.open(map, marker);
-		// Clear marker property when window is closed
-		infowindow.addListener('closeclick', function() {
-			infowindow.marker = null;
-		});
-		var streetViewService = new google.maps.StreetViewService();
-		var radius = 50;
+// function fillInfoWindow(marker, infowindow) {
+// 	// First check to make sure the infowindow is already open
+// 	if(infowindow.marker != marker) {
+// 		// Clear the infowindow content to give streetview time to load
+// 		infowindow.setContent('');
+// 		infowindow.marker = marker;
+// 		// infowindow.open(map, marker);
+// 		// Clear marker property when window is closed
+// 		infowindow.addListener('closeclick', function() {
+// 			infowindow.marker = null;
+// 		});
+// 		var streetViewService = new google.maps.StreetViewService();
+// 		var radius = 50;
 
-		// If the pano is found, compute position of the streetview image,
-		// then calculate heading, get the pano and set options
-		function getStreetView(data, status) {
-			if(status == google.maps.StreetViewStatus.OK) {
-				var nearStreetViewLocation = data.location.latLng;
-				var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-					infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-					var panoramaOptions = {
-						position: nearStreetViewLocation,
-						pov: {
-							heading: heading,
-							pitch: 0
-						}
-					};
-				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-			} else {
-				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
-			}
-		}
-		// Use the streetview to get an image witin 50 meters of the marker
-		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-		infowindow.open(map, marker);
-	}
-}
+// 		// If the pano is found, compute position of the streetview image,
+// 		// then calculate heading, get the pano and set options
+// 		function getStreetView(data, status) {
+// 			if(status == google.maps.StreetViewStatus.OK) {
+// 				var nearStreetViewLocation = data.location.latLng;
+// 				var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+// 					infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+// 					var panoramaOptions = {
+// 						position: nearStreetViewLocation,
+// 						pov: {
+// 							heading: heading,
+// 							pitch: 0
+// 						}
+// 					};
+// 				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+// 			} else {
+// 				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
+// 			}
+// 		}
+// 		// Use the streetview to get an image witin 50 meters of the marker
+// 		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+// 		infowindow.open(map, marker);
+// 	}
+// }
 
-function makeMarkerIcon(markerColor) {
-	var markerImage = new google.maps.MarkerImage('http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-          '|40|_|%E2%80%A2',
-          new google.maps.Size(21, 34),
-          new google.maps.Point(0, 0),
-          new google.maps.Point(10,34),
-          new google.maps.Size(21, 34));
-	return markerImage;
-}
+// function makeMarkerIcon(markerColor) {
+// 	var markerImage = new google.maps.MarkerImage('http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+//           '|40|_|%E2%80%A2',
+//           new google.maps.Size(21, 34),
+//           new google.maps.Point(0, 0),
+//           new google.maps.Point(10,34),
+//           new google.maps.Size(21, 34));
+// 	return markerImage;
+// }
