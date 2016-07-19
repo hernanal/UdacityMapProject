@@ -175,9 +175,9 @@ var model = {
 			placeId: 'ChIJNxEu8SZawokRARkMLjXhyBY'
 		},
 		{
-			title: 'Little Branch',
-			location: {lat: 40.7299746, lng: -74.00504910000001},
-			placeId: 'ChIJnU-H6pJZwokRTY65hSqpNs8'
+			title: 'Speakeasy Room at the Gin Mill',
+			location: {lat: 40.7847532, lng: -73.9775376},
+			placeId: 'ChIJc6GIBIZYwokRVBogFb1MvKI'
 		},
 		{
 			title: 'Middle Branch',
@@ -219,7 +219,7 @@ var octopus = {
 		// First check to make sure the infowindow is already open
 		if(infowindow.marker != marker) {
 			// Clear the infowindow content to give streetview time to load
-			infowindow.setContent(address);
+			// infowindow.setContent('');
 			infowindow.marker = marker;
 			// infowindow.open(map, marker);
 			// Clear marker property when window is closed
@@ -227,47 +227,75 @@ var octopus = {
 				infowindow.marker = null;
 				marker.setAnimation(null);
 			});
-			var streetViewService = new google.maps.StreetViewService();
-			var radius = 50;
+			// var streetViewService = new google.maps.StreetViewService();
+			// var radius = 50;
 
 			// Get details about location
-			var address, hours, phone;
+			var innerHTML;
 			var request = {placeId: marker.placeId};
-			service = new google.maps.places.PlacesService(map);
+			var service = new google.maps.places.PlacesService(map);
 			service.getDetails(request, function(place, status) {
-			  if (status == google.maps.places.PlacesServiceStatus.OK) {
-			    // console.log(place.name);
-			    // console.log(place.formatted_address);
-			    address = place.formatted_address;
-			    phone = place.formatted_phone_number;
-			    hours = place.opening_hours.weekday_text;
-			    console.log(hours);
-			  }
+				if(status === google.maps.places.PlacesServiceStatus.OK) {
+					infowindow.marker = marker;
+					var innerHTML = '<div>';
+					if(place.name) {
+						innerHTML += '<strong>' + marker.title + '</strong>';
+					}
+					if(place.formatted_address) {
+						innerHTML += '<br>' + place.formatted_address;
+					}
+					if(place.formatted_phone_number) {
+						innerHTML += '<br>' + place.formatted_phone_number;
+					} else if(place.formatted_phone_number === undefined) {
+						innerHTML += '<br><em>In true speakeasy fashion, no phone number</em>' 
+					}
+					if(place.rating) {
+						innerHTML += '<br><br>Rating: ' + place.rating;
+					}
+					if(place.opening_hours) {
+						innerHTML += '<br><br><strong>Hours:</strong><br>' +
+							place.opening_hours.weekday_text[0] + '<br>' +
+							place.opening_hours.weekday_text[1] + '<br>' +
+							place.opening_hours.weekday_text[2] + '<br>' +
+							place.opening_hours.weekday_text[3] + '<br>' +
+							place.opening_hours.weekday_text[4] + '<br>' +
+							place.opening_hours.weekday_text[5] + '<br>' +
+							place.opening_hours.weekday_text[6];
+					}
+					if(place.photos) {
+						innerHTML += '<br><br><img src="' + place.photos[0].getUrl(
+							{maxHeight: 150, maxWidth: 250}) + '">';
+					}
+					innerHTML += '</div>';
+					infowindow.setContent(innerHTML);
+					// console.log(innerHTML);
+					infowindow.open(map, marker);
+				}
 			});
 
-			// If the pano is found, compute position of the streetview image,
-			// then calculate heading, get the pano and set options
-			function getStreetView(data, status) {
-				if(status == google.maps.StreetViewStatus.OK) {
-					var nearStreetViewLocation = data.location.latLng;
-					var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-						infowindow.setContent('<div><strong>' + marker.title + '</strong></div><div id="pano"></div><br><div class="info-window">Address: ' + address + '</div><br><div>Phone number: ' + phone + '</div><br><div class="info-window">Hours: ' + hours + '</div>');
-						var panoramaOptions = {
-							position: nearStreetViewLocation,
-							pov: {
-								heading: heading,
-								pitch: 0
-							}
-						};
-						// NEED TO HANDLE POSSIBLE ERROR
-					var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-				} else {
-					infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
-				}
-			}
-			// Use the streetview to get an image witin 50 meters of the marker
-			streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-			infowindow.open(map, marker);
+			// // If the pano is found, compute position of the streetview image,
+			// // then calculate heading, get the pano and set options
+			// function getStreetView(data, status) {
+			// 	if(status == google.maps.StreetViewStatus.OK) {
+			// 		var nearStreetViewLocation = data.location.latLng;
+			// 		var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+			// 			infowindow.setContent(/*'<div><strong>' + marker.title + '</strong></div>*/innerHTML + '<br><div id="pano"></div>');
+			// 				// <br><div class="info-window">Address: ' + address + '</div><br><div>Phone number: ' + phone + '</div><br><div class="info-window">Hours: ' + hours + '</div>');
+			// 			var panoramaOptions = {
+			// 				position: nearStreetViewLocation,
+			// 				pov: {
+			// 					heading: heading,
+			// 					pitch: 0
+			// 				}
+			// 			};
+			// 			// NEED TO HANDLE POSSIBLE ERROR
+			// 		var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+			// 	} else {
+			// 		innerHTML += '<div>' + marker.title + '</div>' + '<div>No Street View Found</div>';
+			// 	}
+			// }
+			// // Use the streetview to get an image witin 50 meters of the marker
+			// streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		}
 	},
 	// toggleBounce: function(marker) {
@@ -304,20 +332,22 @@ var viewMap = {
 			
 			var position = locations[i].location;
 			var title = locations[i].title;
+			var id = locations[i].placeId;
 
 			var marker = new google.maps.Marker({
 				map: map,
 				position: position,
 				title: title,
+				placeId: id,
 				animation: google.maps.Animation.DROP,
 				id: i,
-				icon: barIcon,
-				placeId: locations[i].placeId
+				icon: barIcon
 			});
 			// Put the new marker into our markers array
 			markers.push(marker);
 			// Give each marker a onclick event to open an info window
 			marker.addListener('click', function() {
+				// octopus.getLocationDetails(this, infoWindow);
 				octopus.fillInfoWindow(this, infoWindow);
 				this.setAnimation(google.maps.Animation.BOUNCE);
 			});
@@ -335,6 +365,8 @@ var viewMap = {
 		map.fitBounds(bounds);
 	}
 };
+
+
 
 // function initMap() {
  
@@ -367,3 +399,17 @@ var viewMap = {
 //           new google.maps.Size(21, 34));
 // 	return markerImage;
 // }
+
+/*
+***** Additional Features *****
+
+-- Draw tools
+
+-- Zoom
+
+-- Commute distance matrix for speakeasys near an entered location
+
+-- Autocomplete search bar for near by places
+
+--
+*/
