@@ -33,12 +33,16 @@
 				<input id="search-filter" type="text" placeholder="Search">
 				<input id="filter" type="button" value="Filter">
 				<hr>	
-				<ul id="list-view"></ul>
+				<ul id="list-view" data-bind="foreach: locationList">
+					<li data-bind="text: name"></li>
+					<hr>
+				</ul>
 			</div>
 		</div>
 		<div id="map"></div>
 	</div>
 
+	<script src="js/lib/knockout-3.4.0.js"></script>
 	<script src="js/app2.js"></script>
 	<script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&v=3&callback=octopus.init">
 	</script>
