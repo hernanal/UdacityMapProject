@@ -202,6 +202,10 @@ var model = {
 	markers: []
 };
 
+var listItem = function(data) {
+	this.name = ko.observable(data.title);
+};
+
 var octopus = {
 	init: function() {
 		viewMap.init();
@@ -299,48 +303,19 @@ var octopus = {
 			// streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		}
 	},
-	// This function will go through each response and if the distance 
-	// is less than the value selected, it will show it on the map.
-	// findMarkersWithinTime: function(response) {
-	// 	var maxDuration = document.getElementById('max-duration').value;
-	// 	var origins = response.originAddresses;
-	// 	var destinations = response.destinationAddresses;
-	// Parse through the respones and get the distance and duration
-	// for each. Then, make sure atleast 1 result was found.
-	// 	var atLeastOne = false;
-	// 	for(var i = 0; i < origins.length; i++) {
-	// 		var results = response.rows[i].elements;
-	// 		for(var j = 0; j < results.length; j++) {
-	// 			var element = results[j];
-	// 			if(element.status === "OK") {
-	// 				var distanceText = element.distance.text;
-					// Convert duration value from seconds to minutes
-					// using the value and text
-	// 				var duration = element.duration.value / 60;
-	// 				var durationText = element.duration.text;
-	// 				if(duration <= maxDuration) {
-	// 					markers[i].setMap(map);
-	// 					atLeastOne = true;
-						// Create infowindow to show distance and duration
-	// 					var infowindow = new google.maps.InfoWindow({
-	// 						content: durationText + 'away, ' + distanceText + '<div><input type=\"button\" value=\"View Route\" onclick=' + '\"displayDirections(&quot;' + origins[i] + '&quot;)\"></input></div>'
-	// 					});
-	// 					infowindow.open(map, markers[i]);
-						// Tell the app to close the small infowindow when the user
-						// clicks a marker and opens a large infowindow
-	// 					markers[i].infowindow = infowindow;
-	// 					google.maps.event.addListener(markers[i], 'click', function() {
-	// 						this.infowindow.close();
-	// 					});
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	if(!atLeastOne) {
-	// 		window.alert('There are no locations within that distance!');
-	// 	}
-	// }
 };
+
+var ViewModel = function() {
+	var self = this;
+
+	this.locationList = ko.observableArray([]);
+
+	octopus.getLocations().forEach(function(location) {
+		self.locationList.push(new listItem(location));
+	});
+};
+
+ko.applyBindings(new ViewModel());
 
 var viewMap = {
 	init: function() {
@@ -497,13 +472,12 @@ var viewMap = {
 				travelMode: google.maps.TravelMode[mode]
 	        }, function(response, status) {
 	        	if (status === google.maps.DirectionsStatus.OK) {
-	        		console.log(google.maps.DirectionsStatus);
 					var directionsDisplay = new google.maps.DirectionsRenderer({
 						map: map,
 						directions: response,
 						draggable: true,
 						polylineOptions: {
-						strokeColor: 'green'
+						strokeColor: 'orange'
 						}
     	        	});
 				} else {
