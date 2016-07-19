@@ -205,6 +205,7 @@ var model = {
 var octopus = {
 	init: function() {
 		viewMap.init();
+		// viewCommute.init();
 	},
 	getStyles: function() {
 		return model.styles;
@@ -298,13 +299,47 @@ var octopus = {
 			// streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		}
 	},
-	// toggleBounce: function(marker) {
-	// 	if(marker.getAnimation() !== null) {
-	// 		marker.setAnimation(null);
-	// 	} else {
-	// 		marker.setAnimation(google.maps.Animation.BOUNCE);
+	// This function will go through each response and if the distance 
+	// is less than the value selected, it will show it on the map.
+	// findMarkersWithinTime: function(response) {
+	// 	var maxDuration = document.getElementById('max-duration').value;
+	// 	var origins = response.originAddresses;
+	// 	var destinations = response.destinationAddresses;
+	// Parse through the respones and get the distance and duration
+	// for each. Then, make sure atleast 1 result was found.
+	// 	var atLeastOne = false;
+	// 	for(var i = 0; i < origins.length; i++) {
+	// 		var results = response.rows[i].elements;
+	// 		for(var j = 0; j < results.length; j++) {
+	// 			var element = results[j];
+	// 			if(element.status === "OK") {
+	// 				var distanceText = element.distance.text;
+					// Convert duration value from seconds to minutes
+					// using the value and text
+	// 				var duration = element.duration.value / 60;
+	// 				var durationText = element.duration.text;
+	// 				if(duration <= maxDuration) {
+	// 					markers[i].setMap(map);
+	// 					atLeastOne = true;
+						// Create infowindow to show distance and duration
+	// 					var infowindow = new google.maps.InfoWindow({
+	// 						content: durationText + 'away, ' + distanceText + '<div><input type=\"button\" value=\"View Route\" onclick=' + '\"displayDirections(&quot;' + origins[i] + '&quot;)\"></input></div>'
+	// 					});
+	// 					infowindow.open(map, markers[i]);
+						// Tell the app to close the small infowindow when the user
+						// clicks a marker and opens a large infowindow
+	// 					markers[i].infowindow = infowindow;
+	// 					google.maps.event.addListener(markers[i], 'click', function() {
+	// 						this.infowindow.close();
+	// 					});
+	// 				}
+	// 			}
+	// 		}
 	// 	}
-	// } 
+	// 	if(!atLeastOne) {
+	// 		window.alert('There are no locations within that distance!');
+	// 	}
+	// }
 };
 
 var viewMap = {
@@ -318,6 +353,9 @@ var viewMap = {
 			zoom: 13,
 			styles: octopus.getStyles()
 		});
+        // This autocomplete is for use in the search within time entry box.
+        var timeAutocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('search-within-time-text'));
 		// Render markers with infowindow click events
 		var infoWindow = new google.maps.InfoWindow();
 		var bounds = new google.maps.LatLngBounds();
@@ -361,44 +399,122 @@ var viewMap = {
 				this.setIcon(barIcon);
 			});
 		}
+        document.getElementById('search-within-time').addEventListener('click', function() {
+          searchWithinTime();
+        });
+		function hideMarkers(markers) {
+			for (var i = 0; i < markers.length; i++) {
+				markers[i].setMap(null);
+			}
+		}
+      	function searchWithinTime() {
+	        var distanceMatrixService = new google.maps.DistanceMatrixService;
+	        var address = document.getElementById('search-within-time-text').value;
+			// Check to make sure the address was inputted
+	        if (address == '') {
+	          	window.alert('You must enter an address.');
+	        } else {
+				hideMarkers(markers);
+				// Use the distance matrix to calcuate the time it will take
+				// to get to each location from the destination address entered
+				// by the user.
+				var origins = [];
+				for (var i = 0; i < markers.length; i++) {
+				origins[i] = markers[i].position;
+				}
+				var destination = address;
+				var mode = document.getElementById('mode').value;
+				// Now that both the origins and destination are defined, get all the
+				// info for the distances between them.
+				distanceMatrixService.getDistanceMatrix({
+					origins: origins,
+					destinations: [destination],
+					travelMode: google.maps.TravelMode[mode],
+					unitSystem: google.maps.UnitSystem.IMPERIAL,
+				}, function(response, status) {
+					if (status !== google.maps.DistanceMatrixStatus.OK) {
+					  window.alert('Error was: ' + status);
+					} else {
+					  findMarkersWithinTime(response);
+					}
+				});
+	        }
+	    }
+		// This function will go through each response and if the distance 
+		// is less than the value selected, it will show it on the map.
+		function findMarkersWithinTime(response) {
+			var maxDuration = document.getElementById('max-duration').value;
+			var origins = response.originAddresses;
+			var destinations = response.destinationAddresses;
+			// Parse through the respones and get the distance and duration
+			// for each. Then, make sure atleast 1 result was found.
+			var atLeastOne = false;
+			for (var i = 0; i < origins.length; i++) {
+				var results = response.rows[i].elements;
+				for (var j = 0; j < results.length; j++) {
+			    	var element = results[j];
+					if (element.status === "OK") {
+						var distanceText = element.distance.text;
+						// Convert duration value from seconds to minutes
+						// using the value and text
+						var duration = element.duration.value / 60;
+						var durationText = element.duration.text;
+						if (duration <= maxDuration) {
+							//the origin [i] should = the markers[i]
+							markers[i].setMap(map);
+							atLeastOne = true;
+							// Create infowindow to show distance and duration
+							var infowindow = new google.maps.InfoWindow({
+								content: durationText + ' away, ' + distanceText +
+			                    '<div><input type=\"button\" value=\"View Route\" onclick =' +
+			                    '\"displayDirections(&quot;' + origins[i] + '&quot;);\"></input></div>'
+			            	});
+							// console.log(displayDirections(origins[i]));
+							infowindow.open(map, markers[i]);
+							// Tell the app to close the small infowindow when the user
+							// clicks a marker and opens a large infowindow
+							markers[i].infowindow = infowindow;
+							google.maps.event.addListener(markers[i], 'click', function() {
+						  		this.infowindow.close();
+							});
+						}
+					}
+				}
+			}
+			if (!atLeastOne) {
+		  		window.alert('We could not find any locations within that distance!');
+			}
+		}
+      	// This will show the route on the map when button is clicked.
+		function displayDirections(origin) {
+	        hideMarkers(markers);
+	        var directionsService = new google.maps.DirectionsService;
+	        var destinationAddress = document.getElementById('search-within-time-text').value;
+        	var mode = document.getElementById('mode').value;
+        	directionsService.route({
+	        	origin: origin,
+				destination: destinationAddress,
+				travelMode: google.maps.TravelMode[mode]
+	        }, function(response, status) {
+	        	if (status === google.maps.DirectionsStatus.OK) {
+	        		console.log(google.maps.DirectionsStatus);
+					var directionsDisplay = new google.maps.DirectionsRenderer({
+						map: map,
+						directions: response,
+						draggable: true,
+						polylineOptions: {
+						strokeColor: 'green'
+						}
+    	        	});
+				} else {
+					window.alert('Directions request failed due to ' + status);
+				}
+        	});
+      	}
 		// Extend the boundaries of the map for each marker
 		map.fitBounds(bounds);
 	}
 };
-
-
-
-// function initMap() {
- 
-// 	// Create the first marker
-// 	// var home =	{lat: 40.4458893, lng: -74.52377100000001};
-// 	// var marker = new google.maps.Marker({
-// 	// 	position: home,
-// 	// 	map: map,
-// 	// 	title: 'Home!'
-// 	// });
-	
-
-// 	// Style the speakeasy icon
-
-// 	// Change the color of the icon when the mouse is over it
-// 	var highlightIcon = makeMarkerIcon('FFFF24');
-
-
-	
-// }
-
-
-
-// function makeMarkerIcon(markerColor) {
-// 	var markerImage = new google.maps.MarkerImage('http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-//           '|40|_|%E2%80%A2',
-//           new google.maps.Size(21, 34),
-//           new google.maps.Point(0, 0),
-//           new google.maps.Point(10,34),
-//           new google.maps.Size(21, 34));
-// 	return markerImage;
-// }
 
 /*
 ***** Additional Features *****

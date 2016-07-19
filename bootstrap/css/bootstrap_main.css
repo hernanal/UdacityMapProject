@@ -9,6 +9,12 @@ h1 {
 	margin: 0 0 10px 0;
 	text-align: center;
 }
+hr {
+	background: #D0D7D9;
+	height: 1px;
+	margin: 20px 0 20px 0;
+	border: none;
+}
 .container {
 	height: 100%;
 	position: relative;
@@ -38,6 +44,9 @@ h1 {
 	width: 200px;
 	height: 100px;
 }
-.info-window {
-	width: 200px;
+#search-within-time-text {
+	width: 84%;
+}
+.text {
+	font-size: 14px;
 }
