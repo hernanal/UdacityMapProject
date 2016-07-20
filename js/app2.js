@@ -314,8 +314,6 @@ var ViewModel = function() {
 		self.locationList.push(new listItem(location));
 	});
 
-	this.currentLocation = ko.observable(this.locationList()[0]);
-
 	this.changeItemMarker = function(clickedLocation) {
 		var markers = octopus.getMarkers();
 		for(var i = 0; i < markers.length; i++) {
