@@ -147,7 +147,7 @@ var model = {
 		{
 			title: 'Raines Law Room',
 			location: {lat: 40.73871310000001, lng: -73.99460060000001},
-			placeId: 'ChIJ8wOZzaJZwokR6impURvzUbE'
+			placeId: 'ChIJ8wOZzaJZwokR6impURvzUbE',
 		},
 		{
 			title: 'Please Don’t Tell',
@@ -199,7 +199,7 @@ var model = {
 	    // 	location: {lat: 40.7713024, lng: -73.9632393}
 	    // }		
 	],
-	markers: []
+	markers: ko.observableArray([])
 };
 
 var listItem = function(data) {
@@ -218,7 +218,7 @@ var octopus = {
 		return model.locations;
 	},
 	getMarkers: function() {
-		return model.markers;
+		return model.markers();
 	},
 	fillInfoWindow: function(marker, infowindow) {
 		// First check to make sure the infowindow is already open
@@ -313,6 +313,21 @@ var ViewModel = function() {
 	octopus.getLocations().forEach(function(location) {
 		self.locationList.push(new listItem(location));
 	});
+
+	this.currentLocation = ko.observable(this.locationList()[0]);
+
+	this.changeItemMarker = function(clickedLocation) {
+		var markers = octopus.getMarkers();
+		for(var i = 0; i < markers.length; i++) {
+			var marker = markers[i];
+
+			if(marker.title === clickedLocation.name()) {
+				var infoWindow = new google.maps.InfoWindow();
+				octopus.fillInfoWindow(marker, infoWindow);
+				marker.setAnimation(google.maps.Animation.BOUNCE);
+			}
+		}
+	};
 };
 
 ko.applyBindings(new ViewModel());
