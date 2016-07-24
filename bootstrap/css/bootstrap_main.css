@@ -1,10 +1,14 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
-h1 {
+/*body {
+  padding-top: 50px;
+}
+*/h1 {
 	color: #F39C12;
 	font-size: 22px;
 	margin: 0 0 10px 0;
@@ -52,13 +56,4 @@ hr {
 .text {
 	font-size: 14px;
 }
-||||||| merged common ancestors
-=======
-body {
-  padding-top: 50px;
-}
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
-}
->>>>>>> master
+
