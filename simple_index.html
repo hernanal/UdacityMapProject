@@ -10,8 +10,8 @@
 		<div class="options-box">
 			<h1>Discover an NYC speakeasy!</h1>
 			<hr>
-			<h2>You've been to <span data-bind="text: checkIn().length"></span> speakeasy(s)</h2>
-			<div>
+<!-- 			<h2>You've been to <span data-bind="text: checkIn().length"></span> speakeasy(s)</h2>
+ -->			<div>
 				<span class="text">Within</span>
 				<select id="max-duration">
 					<option value="10">10 min</option>
@@ -34,8 +34,8 @@
 				<input id="search-filter-text" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search">
 				<input id="filter" type="button" value="Filter">
 				<hr>	
-				<ul id="list-view" data-bind="foreach: locationList">
-					<li data-bind="text: name, click: $parent.changeItemMarker"></li>
+				<ul id="list-view" data-bind="foreach: filteredItems">
+					<li data-bind="text: title, click: $parent.changeItemMarker"></li>
 <!-- 					<input id="check-in" type="button" value="Check In?" data-bind="click: $parent.addCheckIn, visible: $parent.checkIn().length < 1">
  -->					<hr>
 				</ul>
