@@ -5,9 +5,7 @@
 var map, checkInButton;
 
 var model = {
-	// checkIn : {
-	// 	buttonClicks: 0
-	// },
+	visits: 0,
 	// https://snazzymaps.com/style/70/unsaturated-browns
 	styles: [
 		{
@@ -154,51 +152,61 @@ var locations = [
 		title: 'Raines Law Room',
 		location: {lat: 40.73871310000001, lng: -73.99460060000001},
 		placeId: 'ChIJ8wOZzaJZwokR6impURvzUbE',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Please Don’t Tell',
 		location: {lat: 40.72716399999999, lng: -73.98371500000002},
-		placeId: 'ChIJb67-ZZ1ZwokRRxBYr3GlFp0'
+		placeId: 'ChIJb67-ZZ1ZwokRRxBYr3GlFp0',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Employees Only',
 		location: {lat: 40.7334327, lng: -74.0060815},
-		placeId: 'ChIJLztrVJNZwokRTmcQJheGNR4'
+		placeId: 'ChIJLztrVJNZwokRTmcQJheGNR4',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Dear Irving',
 		location: {lat: 40.7362291, lng: -73.9874304},
-		placeId: 'ChIJN40c3qFZwokRXMy2Eb1vKj8'
+		placeId: 'ChIJN40c3qFZwokRXMy2Eb1vKj8',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Death & Company',
 		location: {lat: 40.7259632, lng: -73.98462059999997},
-		placeId: 'ChIJKU1MNJ1ZwokRQ7eiWK511vI'
+		placeId: 'ChIJKU1MNJ1ZwokRQ7eiWK511vI',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Apothéke the bar',
 		location: {lat: 40.7143818, lng: -73.99818290000002},
-		placeId: 'ChIJNxEu8SZawokRARkMLjXhyBY'
+		placeId: 'ChIJNxEu8SZawokRARkMLjXhyBY',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Speakeasy Room at the Gin Mill',
 		location: {lat: 40.7847532, lng: -73.9775376},
-		placeId: 'ChIJc6GIBIZYwokRVBogFb1MvKI'
+		placeId: 'ChIJc6GIBIZYwokRVBogFb1MvKI',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Middle Branch',
 		location: {lat: 40.7452845, lng: -73.97946159999998},
-		placeId: 'ChIJW9_FLwZZwokRTb3xWwh9tDs'
+		placeId: 'ChIJW9_FLwZZwokRTb3xWwh9tDs',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Nitecap',
 		location: {lat: 40.7199088, lng: -73.98718259999998},
-		placeId: 'ChIJYVwmFYFZwokRuSJWe5CgaNw'
+		placeId: 'ChIJYVwmFYFZwokRuSJWe5CgaNw',
+		clicked: ko.observable(false)
 	},
 	{
 		title: 'Back Room',
 		location: {lat: 40.7187348, lng: -73.98694309999996},
-		placeId: 'ChIJnY19HoFZwokRfs9FwDLVRKw'
+		placeId: 'ChIJnY19HoFZwokRfs9FwDLVRKw',
+		clicked: ko.observable(false)
 	}
 ]	
 
@@ -207,15 +215,15 @@ var octopus = {
 		viewMap.init();
 		// viewCommute.init();
 	},
-	getCheckIns: function() {
-		return model.checkIns;
-	},
 	getStyles: function() {
 		return model.styles;
 	},
 	getMarkers: function() {
 		return model.markers();
 	},
+	// getVisits: function() {
+	// 	return model.visits;
+	// },
 	fillInfoWindow: function(marker, infowindow) {
 		// First check to make sure the infowindow is already open
 		if(infowindow.marker != marker) {
@@ -331,13 +339,15 @@ var ViewModel = function() {
 		}
 	};
 
-	// self.checkIn = ko.observableArray([]);
+	self.visits = ko.observable(0);
 
-	// self.addCheckIn = function() {
-	// 	self.checkIn.push('1');
-	// };
-
-	// // checkInButton = '<div><br><input id="check-in" type="button" value="Check In?" data-bind="click: addCheckIn, visible: checkIns() < 1"></div>';
+	self.increaseVisits = function(clickedButton) {
+		if(clickedButton.clicked !== true) {
+			self.visits(model.visits += 1);
+			clickedButton.clicked(true);
+			// console.log(self.visits());
+		}
+	};
 };
 
 ko.applyBindings(new ViewModel());
