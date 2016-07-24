@@ -221,9 +221,6 @@ var octopus = {
 	getMarkers: function() {
 		return model.markers();
 	},
-	// getVisits: function() {
-	// 	return model.visits;
-	// },
 	fillInfoWindow: function(marker, infowindow) {
 		// First check to make sure the infowindow is already open
 		if(infowindow.marker != marker) {
@@ -345,7 +342,6 @@ var ViewModel = function() {
 		if(clickedButton.clicked !== true) {
 			self.visits(model.visits += 1);
 			clickedButton.clicked(true);
-			// console.log(self.visits());
 		}
 	};
 };

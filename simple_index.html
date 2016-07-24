@@ -10,8 +10,9 @@
 		<div class="options-box">
 			<h1>Discover an NYC speakeasy!</h1>
 			<hr>
-<!-- 			<h2>You've been to <span data-bind="text: checkIn().length"></span> speakeasy(s)</h2>
- -->			<div>
+			<h2 data-bind="visible: visits() < locationListItems().length">You've been to <span data-bind="text: visits"></span> out of <span data-bind="text: locationListItems().length"></span> speakeasys!!</h2>
+			<h2 data-bind="visible: visits() === locationListItems().length">Hurray! You've visited all the speakeasys!</h2>
+			<div>
 				<span class="text">Within</span>
 				<select id="max-duration">
 					<option value="10">10 min</option>
@@ -36,8 +37,8 @@
 				<hr>	
 				<ul id="list-view" data-bind="foreach: filteredItems">
 					<li data-bind="text: title, click: $parent.changeItemMarker"></li>
-<!-- 					<input id="check-in" type="button" value="Check In?" data-bind="click: $parent.addCheckIn, visible: $parent.checkIn().length < 1">
- -->					<hr>
+					<input id="checkInButton" type="button" value="Check In?" data-bind="click: $parent.increaseVisits, visible: clicked() !== true">
+					<hr>
 				</ul>
 			</div>
 		</div>
@@ -52,6 +53,5 @@
 </body>
 </html>
 
-<input id="check-in" type="button" value="Check In?" data-bind="click: checkIn, visible: checkIns() <= 0">
 
 <!-- Merge search branch with master  -->
