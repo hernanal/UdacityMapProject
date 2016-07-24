@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 html, body {
 	height: 100%;
 	margin: 0;
@@ -51,3 +52,13 @@ hr {
 .text {
 	font-size: 14px;
 }
+||||||| merged common ancestors
+=======
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+>>>>>>> master
