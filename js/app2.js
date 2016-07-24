@@ -5,9 +5,9 @@
 var map, checkInButton;
 
 var model = {
-	checkIn : {
-		buttonClicks: 0
-	},
+	// checkIn : {
+	// 	buttonClicks: 0
+	// },
 	// https://snazzymaps.com/style/70/unsaturated-browns
 	styles: [
 		{
@@ -146,69 +146,61 @@ var model = {
 			]
 		}
 	],
-	locations: [
-		{
-			title: 'Raines Law Room',
-			location: {lat: 40.73871310000001, lng: -73.99460060000001},
-			placeId: 'ChIJ8wOZzaJZwokR6impURvzUbE',
-		},
-		{
-			title: 'Please Don’t Tell',
-			location: {lat: 40.72716399999999, lng: -73.98371500000002},
-			placeId: 'ChIJb67-ZZ1ZwokRRxBYr3GlFp0'
-		},
-		{
-			title: 'Employees Only',
-			location: {lat: 40.7334327, lng: -74.0060815},
-			placeId: 'ChIJLztrVJNZwokRTmcQJheGNR4'
-		},
-		{
-			title: 'Dear Irving',
-			location: {lat: 40.7362291, lng: -73.9874304},
-			placeId: 'ChIJN40c3qFZwokRXMy2Eb1vKj8'
-		},
-		{
-			title: 'Death & Company',
-			location: {lat: 40.7259632, lng: -73.98462059999997},
-			placeId: 'ChIJKU1MNJ1ZwokRQ7eiWK511vI'
-		},
-		{
-			title: 'Apothéke the bar',
-			location: {lat: 40.7143818, lng: -73.99818290000002},
-			placeId: 'ChIJNxEu8SZawokRARkMLjXhyBY'
-		},
-		{
-			title: 'Speakeasy Room at the Gin Mill',
-			location: {lat: 40.7847532, lng: -73.9775376},
-			placeId: 'ChIJc6GIBIZYwokRVBogFb1MvKI'
-		},
-		{
-			title: 'Middle Branch',
-			location: {lat: 40.7452845, lng: -73.97946159999998},
-			placeId: 'ChIJW9_FLwZZwokRTb3xWwh9tDs'
-		},
-		{
-			title: 'Nitecap',
-			location: {lat: 40.7199088, lng: -73.98718259999998},
-			placeId: 'ChIJYVwmFYFZwokRuSJWe5CgaNw'
-		},
-		{
-			title: 'Back Room',
-			location: {lat: 40.7187348, lng: -73.98694309999996},
-			placeId: 'ChIJnY19HoFZwokRfs9FwDLVRKw'
-		},
-	    // {
-	    // 	title: 'Park Ave Penthouse', 
-	    // 	location: {lat: 40.7713024, lng: -73.9632393}
-	    // }		
-	],
 	markers: ko.observableArray([])
 };
 
-var listItem = function(data) {
-	this.name = ko.observable(data.title);
-	this.checkIn = document.getElementById('check-in');
-};
+var locations = [
+	{
+		title: 'Raines Law Room',
+		location: {lat: 40.73871310000001, lng: -73.99460060000001},
+		placeId: 'ChIJ8wOZzaJZwokR6impURvzUbE',
+	},
+	{
+		title: 'Please Don’t Tell',
+		location: {lat: 40.72716399999999, lng: -73.98371500000002},
+		placeId: 'ChIJb67-ZZ1ZwokRRxBYr3GlFp0'
+	},
+	{
+		title: 'Employees Only',
+		location: {lat: 40.7334327, lng: -74.0060815},
+		placeId: 'ChIJLztrVJNZwokRTmcQJheGNR4'
+	},
+	{
+		title: 'Dear Irving',
+		location: {lat: 40.7362291, lng: -73.9874304},
+		placeId: 'ChIJN40c3qFZwokRXMy2Eb1vKj8'
+	},
+	{
+		title: 'Death & Company',
+		location: {lat: 40.7259632, lng: -73.98462059999997},
+		placeId: 'ChIJKU1MNJ1ZwokRQ7eiWK511vI'
+	},
+	{
+		title: 'Apothéke the bar',
+		location: {lat: 40.7143818, lng: -73.99818290000002},
+		placeId: 'ChIJNxEu8SZawokRARkMLjXhyBY'
+	},
+	{
+		title: 'Speakeasy Room at the Gin Mill',
+		location: {lat: 40.7847532, lng: -73.9775376},
+		placeId: 'ChIJc6GIBIZYwokRVBogFb1MvKI'
+	},
+	{
+		title: 'Middle Branch',
+		location: {lat: 40.7452845, lng: -73.97946159999998},
+		placeId: 'ChIJW9_FLwZZwokRTb3xWwh9tDs'
+	},
+	{
+		title: 'Nitecap',
+		location: {lat: 40.7199088, lng: -73.98718259999998},
+		placeId: 'ChIJYVwmFYFZwokRuSJWe5CgaNw'
+	},
+	{
+		title: 'Back Room',
+		location: {lat: 40.7187348, lng: -73.98694309999996},
+		placeId: 'ChIJnY19HoFZwokRfs9FwDLVRKw'
+	}
+]	
 
 var octopus = {
 	init: function() {
@@ -220,9 +212,6 @@ var octopus = {
 	},
 	getStyles: function() {
 		return model.styles;
-	},
-	getLocations: function() {
-		return model.locations;
 	},
 	getMarkers: function() {
 		return model.markers();
@@ -315,68 +304,40 @@ var octopus = {
 var ViewModel = function() {
 	var self = this;
 
-	this.locationList = ko.observableArray([]);
+	self.locationListItems = ko.observableArray(locations);
+	self.filter = ko.observable('');
 
-	this.locationArray = ko.observableArray(octopus.getLocations());
+	self.filteredItems = ko.computed(function() {
+		var filter = self.filter().toLowerCase();
+		if(!filter) {
+			return self.locationListItems();
+		} else {
+			return ko.utils.arrayFilter(self.locationListItems(), function(item) {
+				return item.title.toLowerCase().indexOf(filter) !== -1;
+			});
+		}
+	}, self);
 
-
-	octopus.getLocations().forEach(function(location) {
-		self.locationList.push(new listItem(location));
-	});
-
-	this.changeItemMarker = function(clickedLocation) {
+	self.changeItemMarker = function(clickedLocation) {
 		var markers = octopus.getMarkers();
 		for(var i = 0; i < markers.length; i++) {
 			var marker = markers[i];
 
-			if(marker.title === clickedLocation.name()) {
+			if(marker.title === clickedLocation.title) {
 				var infoWindow = new google.maps.InfoWindow();
 				octopus.fillInfoWindow(marker, infoWindow);
 				marker.setAnimation(google.maps.Animation.BOUNCE);
 			}
 		}
 	};
-	this.filterListItems = function(filter) {
 
-	};
+	// self.checkIn = ko.observableArray([]);
 
-	this.checkIn = ko.observableArray([]);
+	// self.addCheckIn = function() {
+	// 	self.checkIn.push('1');
+	// };
 
-	this.addCheckIn = function() {
-		self.checkIn.push('1');
-	};
-
-	this.filter = ko.observable();
-
-	self.filteredItems = ko.computed(function() {
-		var filter = this.filter();
-		var locations = this.locationArray();
-		for(var i = 0; i < locations.length; i++) {
-			var location = locations[i];
-			var firstLetter = location.title[0].toLowerCase();
-			if(filter === firstLetter) {
-				// location.setAttribute('style', 'display:none');
-				console.log(ko.utils.arrayFilter(self.locationArray, filter) === true);
-				return ko.utils.arrayFilter(self.locationList, function(location) {
-					console.log(self.locationList.indexOf(filter));
-					return self.locationList.indexOf(filter);
-					// console.log(location);
-					// self.locationList.removeAll();
-					// self.locationList.push(location);
-				});
-				// console.log(location.title); 
-			}
-		}
-		// if(filter === "a") {
-		// 	return this.locationList();
-		// } else {
-			// return ko.utils.arrayFilter(this.locationList(), function(location) {
-		// 		// return this.locationList()[0].indexOf(filter) !== -1;
-		// 		return location.name;
-		// 	});
-		// }
-	}, self);
-	// checkInButton = '<div><br><input id="check-in" type="button" value="Check In?" data-bind="click: addCheckIn, visible: checkIns() < 1"></div>';
+	// // checkInButton = '<div><br><input id="check-in" type="button" value="Check In?" data-bind="click: addCheckIn, visible: checkIns() < 1"></div>';
 };
 
 ko.applyBindings(new ViewModel());
@@ -398,7 +359,7 @@ var viewMap = {
 		// Render markers with infowindow click events
 		var infoWindow = new google.maps.InfoWindow();
 		var bounds = new google.maps.LatLngBounds();
-		var locations = octopus.getLocations();
+		// var locations = octopus.getLocations();
 		var markers = octopus.getMarkers();
 		var barIcon = 'img/bar_icon.svg';
 		var drinkIcon = 'img/drink_icon.svg';
