@@ -10,6 +10,7 @@
 		<div class="options-box">
 			<h1>Discover an NYC speakeasy!</h1>
 			<hr>
+			<h2>You've been to <span data-bind="text: checkIn().length"></span> speakeasy(s)</h2>
 			<div>
 				<span class="text">Within</span>
 				<select id="max-duration">
@@ -30,12 +31,13 @@
 			</div>
 			<hr>
 			<div>
-				<input id="search-filter" type="text" placeholder="Search">
+				<input id="search-filter-text" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search">
 				<input id="filter" type="button" value="Filter">
 				<hr>	
 				<ul id="list-view" data-bind="foreach: locationList">
 					<li data-bind="text: name, click: $parent.changeItemMarker"></li>
-					<hr>
+<!-- 					<input id="check-in" type="button" value="Check In?" data-bind="click: $parent.addCheckIn, visible: $parent.checkIn().length < 1">
+ -->					<hr>
 				</ul>
 			</div>
 		</div>
@@ -43,8 +45,11 @@
 	</div>
 
 	<script src="js/lib/knockout-3.4.0.js"></script>
+	<script src="js/lib/jquery.min.js"></script>
 	<script src="js/app2.js"></script>
-	<script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&v=3&callback=octopus.init">
+	<script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init">
 	</script>
 </body>
 </html>
+
+<input id="check-in" type="button" value="Check In?" data-bind="click: checkIn, visible: checkIns() <= 0">

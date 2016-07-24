@@ -2,9 +2,12 @@
 
 // Google maps API
 
-var map;
+var map, checkInButton;
 
 var model = {
+	checkIn : {
+		buttonClicks: 0
+	},
 	// https://snazzymaps.com/style/70/unsaturated-browns
 	styles: [
 		{
@@ -204,12 +207,16 @@ var model = {
 
 var listItem = function(data) {
 	this.name = ko.observable(data.title);
+	this.checkIn = document.getElementById('check-in');
 };
 
 var octopus = {
 	init: function() {
 		viewMap.init();
 		// viewCommute.init();
+	},
+	getCheckIns: function() {
+		return model.checkIns;
 	},
 	getStyles: function() {
 		return model.styles;
@@ -310,6 +317,9 @@ var ViewModel = function() {
 
 	this.locationList = ko.observableArray([]);
 
+	this.locationArray = ko.observableArray(octopus.getLocations());
+
+
 	octopus.getLocations().forEach(function(location) {
 		self.locationList.push(new listItem(location));
 	});
@@ -326,6 +336,47 @@ var ViewModel = function() {
 			}
 		}
 	};
+	this.filterListItems = function(filter) {
+
+	};
+
+	this.checkIn = ko.observableArray([]);
+
+	this.addCheckIn = function() {
+		self.checkIn.push('1');
+	};
+
+	this.filter = ko.observable();
+
+	self.filteredItems = ko.computed(function() {
+		var filter = this.filter();
+		var locations = this.locationArray();
+		for(var i = 0; i < locations.length; i++) {
+			var location = locations[i];
+			var firstLetter = location.title[0].toLowerCase();
+			if(filter === firstLetter) {
+				// location.setAttribute('style', 'display:none');
+				console.log(ko.utils.arrayFilter(self.locationArray, filter) === true);
+				return ko.utils.arrayFilter(self.locationList, function(location) {
+					console.log(self.locationList.indexOf(filter));
+					return self.locationList.indexOf(filter);
+					// console.log(location);
+					// self.locationList.removeAll();
+					// self.locationList.push(location);
+				});
+				// console.log(location.title); 
+			}
+		}
+		// if(filter === "a") {
+		// 	return this.locationList();
+		// } else {
+			// return ko.utils.arrayFilter(this.locationList(), function(location) {
+		// 		// return this.locationList()[0].indexOf(filter) !== -1;
+		// 		return location.name;
+		// 	});
+		// }
+	}, self);
+	// checkInButton = '<div><br><input id="check-in" type="button" value="Check In?" data-bind="click: addCheckIn, visible: checkIns() < 1"></div>';
 };
 
 ko.applyBindings(new ViewModel());
@@ -506,13 +557,22 @@ var viewMap = {
 /*
 ***** Additional Features *****
 
--- Draw tools
+-- 	Add a showFullList button
 
--- Zoom
+-- 	Add getStreetView to octopus. When the marker is clicked on the map
+	the streetView and name should pop up. When the listItem is clicked
+	place details should pop up	
 
--- Commute distance matrix for speakeasys near an entered location
+-- 	Autocomplete search bar for near by places using yelp api
 
--- Autocomplete search bar for near by places
+-- 	Keep track of how many times an item is clicked and display the list
+	items from most clicks to least clicks
 
---
+-- 	Draw tools
+
+-- 	Zoom
+
+-- 	Devise a way for the app to confirm if someone is actually at a location
+	when they press the check in button
+
 */
