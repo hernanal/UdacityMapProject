@@ -41,12 +41,25 @@
 					<hr>
 				</ul>
 			</div>
+			<div>
+				<form id="yelp_form_container">
+					<input type="text" id="city" value="" placeholder="Search your city!">
+					<select id="state_selection" value="" data-bind="foreach: states">
+						<option data-bind="text: abbreviation"></option>
+					</select>
+					<button id="yelp_submit-btn">Let's go!</button>
+				</form>
+			</div>
+			<div>
+				<ul id="yelp_results"></ul>
+			</div>
 		</div>
 		<div id="map"></div>
 	</div>
 
-	<script src="js/lib/knockout-3.4.0.js"></script>
 	<script src="js/lib/jquery.min.js"></script>
+	<script src="js/lib/knockout-3.4.0.js"></script>
+	<script src="js/lib/oauth-signature.min.js"></script>
 	<script src="js/app2.js"></script>
 	<script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init">
 	</script>
