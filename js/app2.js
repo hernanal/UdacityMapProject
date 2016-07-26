@@ -369,13 +369,6 @@ var ViewModel = function() {
 			clickedButton.clicked(true);
 		}
 	};
-
-	self.resetYelpResults = function() {
-		loadData().remove();
-	}
-
-	// self.yelpMarkers = observableArray([]);
-
 };
 
 ko.applyBindings(new ViewModel());
