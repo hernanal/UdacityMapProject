@@ -144,7 +144,13 @@ var model = {
 			]
 		}
 	],
-	markers: ko.observableArray([])
+	markers: ko.observableArray([]),
+	states: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+			 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+			 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 
+			 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 
+			 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+			 ]
 };
 
 var locations = [
@@ -304,27 +310,46 @@ var octopus = {
 			// streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		}
 	},
+	nonce_generator: function() {
+		return (Math.floor(Math.random() * 1e12).toString());
+	}
 };
 
 var ViewModel = function() {
 	var self = this;
 
+	self.markers = octopus.getMarkers();
 	self.locationListItems = ko.observableArray(locations);
 	self.filter = ko.observable('');
+	self.states = ko.observableArray([]);
+
+	model.states.forEach(function(state) {
+		self.states().push({abbreviation: state});
+	});
 
 	self.filteredItems = ko.computed(function() {
 		var filter = self.filter().toLowerCase();
 		if(!filter) {
+			for(var i = 0; i < self.markers.length; i++) {
+				self.markers[i].setMap(map);
+			}
 			return self.locationListItems();
 		} else {
 			return ko.utils.arrayFilter(self.locationListItems(), function(item) {
+				for(var i = 0; i < self.markers.length; i++) {
+					if(self.markers[i].title.toLowerCase().indexOf(filter) === -1) {
+						self.markers[i].setMap(null);
+					} else {
+						self.markers[i].setMap(map);
+					}
+				}
 				return item.title.toLowerCase().indexOf(filter) !== -1;
 			});
 		}
 	}, self);
 
 	self.changeItemMarker = function(clickedLocation) {
-		var markers = octopus.getMarkers();
+		var markers = self.markers;
 		for(var i = 0; i < markers.length; i++) {
 			var marker = markers[i];
 
@@ -344,6 +369,13 @@ var ViewModel = function() {
 			clickedButton.clicked(true);
 		}
 	};
+
+	self.resetYelpResults = function() {
+		loadData().remove();
+	}
+
+	// self.yelpMarkers = observableArray([]);
+
 };
 
 ko.applyBindings(new ViewModel());
@@ -521,6 +553,63 @@ var viewMap = {
 	}
 };
 
+var loadData = function() {
+	var city = $('#city').val(); 
+	var state = $('#state_selection').val(); 
+	var $yelpElem = $('#yelp_results');
+	var $yelpForm = $('#yelp_form_container');
+
+	$yelpElem.text("");
+	var yelp_url = 'https://api.yelp.com/v2/search';
+	var yelp_parameters = {
+		location: city + state,
+		term: 'speakeasy',
+		limit: 10,
+		sort: 2,
+		oauth_consumer_key: 'ZvnJ-cSFo6XqeIfL-lVUsQ',
+		oauth_token: '4GHYiXGXLbSjBfr7v8PqSvKbdkb4mBA6',
+		oauth_nonce: octopus.nonce_generator(),
+		oauth_timestamp: Math.floor(Date.now()/1000),
+		oauth_signature_method: 'HMAC-SHA1',
+		oauth_version: '1.0',
+		callback: 'cb'
+	};
+	var yelp_consumerS = 'Y54xj9QUSLPpKo69rlGORv621SA';
+	var yelp_TokenS = '7LFA0VSnN8t4F_dpv2FhGtlPuzw';
+
+	var encodedSignature = oauthSignature.generate('GET', yelp_url, yelp_parameters, yelp_consumerS, yelp_TokenS);
+	yelp_parameters.oauth_signature = encodedSignature;
+
+	var settings = {
+		url: yelp_url,
+		data: yelp_parameters,
+		cache: true,
+		dataType: 'jsonp',
+		success: function(results) {
+			var businesses = results.businesses;
+			console.log(results.businesses);
+			for(var i = 0; i < businesses.length; i++) {
+				if(!city) {
+					$yelpElem.remove();
+				} else {
+					var name = businesses[i].name;
+					$yelpElem.append('<li>' + name + '</li>');
+				}
+			}
+		},
+		fail: function() {
+			window.alert('No results found!');
+		}
+	};
+	$.ajax(settings);
+
+	return false;
+};
+
+$('#yelp_form_container').submit(loadData);
+
+	
+	
 /*
 ***** Additional Features *****
 
