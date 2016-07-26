@@ -145,6 +145,7 @@ var model = {
 		}
 	],
 	markers: ko.observableArray([]),
+	yelpMarkers: ko.observableArray([]),
 	states: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
 			 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
 			 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 
@@ -226,6 +227,9 @@ var octopus = {
 	},
 	getMarkers: function() {
 		return model.markers();
+	},
+	getYelpMarkers: function() {
+		return model.yelpMarkers();
 	},
 	fillInfoWindow: function(marker, infowindow) {
 		// First check to make sure the infowindow is already open
@@ -553,12 +557,15 @@ var loadData = function() {
 	var $yelpForm = $('#yelp_form_container');
 
 	$yelpElem.text("");
+	// var yelpMarkers = [];
+
 	var yelp_url = 'https://api.yelp.com/v2/search';
 	var yelp_parameters = {
 		location: city + state,
 		term: 'speakeasy',
 		limit: 10,
 		sort: 2,
+		category_filter: 'cocktailbars',
 		oauth_consumer_key: 'ZvnJ-cSFo6XqeIfL-lVUsQ',
 		oauth_token: '4GHYiXGXLbSjBfr7v8PqSvKbdkb4mBA6',
 		oauth_nonce: octopus.nonce_generator(),
@@ -580,14 +587,34 @@ var loadData = function() {
 		dataType: 'jsonp',
 		success: function(results) {
 			var businesses = results.businesses;
-			console.log(results.businesses);
+			// console.log(businesses[0]);
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {lat: businesses[0].location.coordinate.latitude, lng: businesses[0].location.coordinate.longitude},
+				zoom: 12,
+				styles: octopus.getStyles()
+			});
+			var bounds = new google.maps.LatLngBounds();
+			var yelpMarkers = octopus.getYelpMarkers();
+		    var barIcon = 'img/bar_icon.svg';
+		    var drinkIcon = 'img/drink_icon.svg';
+
 			for(var i = 0; i < businesses.length; i++) {
-				if(!city) {
-					$yelpElem.remove();
-				} else {
-					var name = businesses[i].name;
-					$yelpElem.append('<li>' + name + '</li>');
-				}
+				var title = businesses[i].name;
+				var position = {lat: businesses[i].location.coordinate.latitude, lng: businesses[i].location.coordinate.longitude};
+				// console.log(position);
+
+				var marker = new google.maps.Marker({
+					map: map,
+					position: position,
+					title: title,
+					animation: google.maps.Animation.DROP,
+					id: i,
+					icon: barIcon
+				});
+				yelpMarkers.push(marker);
+				console.log(position);
+				bounds.extend(yelpMarkers[i].position);
+				$yelpElem.append('<li>' + title + '</li><hr>');
 			}
 		},
 		fail: function() {
