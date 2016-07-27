@@ -54,3 +54,7 @@ hr {
 .text {
 	font-size: 14px;
 }
+.yelpInfoWin {
+	max-width: 300px;
+	max-height: 200px;
+}
