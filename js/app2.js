@@ -348,7 +348,6 @@ var octopus = {
 			}
 			innerHTML += '</div>';
 			infowindow.setContent(innerHTML);
-			// console.log(innerHTML);
 			infowindow.open(map, marker);
 		}
 	},
@@ -637,30 +636,6 @@ var loadData = function() {
 		    var barIcon = 'img/bar_icon.svg';
 		    var drinkIcon = 'img/drink_icon.svg';
 
-		    // var service = new google.maps.places.PlacesService(map);
-		    // var yelpPlaces = ko.observableArray([]);
-			// FOR LOOP 
-			// for(var i = 0; i < businesses.length; i++) {
-			//     var request = {
-			//     	query: businesses[i].name,
-			//     	title: businesses[i].name,
-			//     	location: {lat: businesses[i].location.coordinate.latitude, lng: businesses[i].location.coordinate.longitude},
-			//     };
-			//     service.textSearch(request, function(results, status) {
-			// 		if (status == google.maps.places.PlacesServiceStatus.OK) {
-			// 			yelpPlaces().push({
-			// 				title: request.title,
-			// 				location: request.location,
-			// 				placeId: results[0].place_id,
-			// 				clicked: ko.observable(false)
-			// 			});
-			// 		}
-		 //    	});
-
-			// }
-		 //    console.log(yelpPlaces());
-		    //  
-
 			for(var i = 0; i < businesses.length; i++) {
 				var title = businesses[i].name;
 				var position = {lat: businesses[i].location.coordinate.latitude, lng: businesses[i].location.coordinate.longitude};
@@ -670,18 +645,6 @@ var loadData = function() {
 				var image = businesses[i].image_url;
 				var review = businesses[i].snippet_text;
 				var url = businesses[i].url;
-				// console.log(rating_img);
-			  //   var request = {
-			  //   	query: title
-			  //   };
-			  //   service.textSearch(request, function(results, status) {
-					// if (status == google.maps.places.PlacesServiceStatus.OK) {
-					// 	var placeIDs = ko.observableArray('')
-					// 	placeIDs.push(results[0].place_id);
-					// 	console.log(placeIDs().length);
-
-					// }		    	
-			  //   });
 
 				var marker = new google.maps.Marker({
 					map: map,
@@ -699,46 +662,11 @@ var loadData = function() {
 				});
 				yelpMarkers.push(marker);
 				marker.addListener('click', function() {
-				// octopus.getLocationDetails(this, infoWindow);
-					// octopus.fillInfoWindow(this, infoWindow);
-     //              	var infoContent = '<div><h3>' + this.title + '</h3></div>' + '<div><img src="' + this.rating + '"></div>' + '<h4>' + results.location.address + '</h4><h4>' + results.display_phone + '</h4><a href="' + currentMarker.web + '" target="_blank">' + currentMarker.web + '</a><hr><div><img src="' + results.image_url + '" class="img-responsive"></div>' + '<div>' + results.snippet_text + '</div><hr><div><a href="' + results.url + '" target="_blank">Go to Yelp Page</a></div><div><img src="img/yelp_powered_btn_red.png"></div></div>';
-					// infoWindow.setContent(infoContent);
 					octopus.fillYelpInfoWindow(this, infoWindow);
 					this.setAnimation(google.maps.Animation.BOUNCE);
-					// infoWindow.open(map, this);
 				});
-				// marker.addListener('closeclick', function() {
-				// 	octopus.fillYelpInfoWindow(this, infoWindow);
-				// 	this.setAnimation(null);
-				// 	console.log('working');
-				// });
 				bounds.extend(yelpMarkers[i].position);
 				$yelpElem.append('<li>' + title + '</li><hr>');
-
-				 // service.textSearch(request, function(results, status) {
-					// if (status == google.maps.places.PlacesServiceStatus.OK) {
-					// 	var placeIDs = ko.observableArray('')
-					// 	placeIDs.push(results[0].place_id);
-					// 	console.log(placeIDs()[0]);
-					// 	var marker = new google.maps.Marker({
-					// 		map: map,
-					// 		position: position,
-					// 		title: title,
-					// 		placeId: placeIDs()[0],
-					// 		animation: google.maps.Animation.DROP,
-					// 		id: i,
-					// 		icon: barIcon
-					// 	});
-					// 	yelpMarkers.push(marker);
-					// 	marker.addListener('click', function() {
-					// 	// octopus.getLocationDetails(this, infoWindow);
-					// 		octopus.fillInfoWindow(this, infoWindow);
-					// 		this.setAnimation(google.maps.Animation.BOUNCE);
-					// 	});
-					// 	bounds.extend(yelpMarkers[i].position);
-					// 	$yelpElem.append('<li>' + title + '</li><hr>');
-					// }		    	
-			  //   });
 			}
 		},
 		fail: function() {
