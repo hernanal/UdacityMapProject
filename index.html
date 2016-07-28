@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="bootstrap/favicon.ico">
 
-    <title>Neighborhood Map</title>
+    <title>NYC SpeakEZ</title>
 
     <!-- Bootstrap core CSS -->
     <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,17 +56,63 @@
     </nav>
 
     <div class="container">
-
-      <div class="main" id="map"></div>
-
+      <div class="options-box">
+        <h1>Discover an NYC Speakeasy!</h1>
+        <hr>
+        <h3 data-bind="visible: visits() < locationListItems().length">You've been to <span data-bind="text: visits"></span> out of <span data-bind="text: locationListItems().length"></span> Speakeasys!!</h3>
+        <h2 data-bind="visible: visits() === locationListItems().length">Hurray! You've visited all the Speakeasys!</h2>
+        <div>
+          <span class="text">Within</span>
+          <select id="max-duration">
+            <option value="10">10 min</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="60">1 hour</option>
+          </select>
+          <select id="mode">
+            <option value="DRIVING">drive</option>
+            <option value="WALKING">walk</option>
+            <option value="BICYCLING">bike</option>
+            <option value="TRANSIT">transit ride</option>
+          </select>
+          <span class="text">of</span>
+          <input id="search-time-text" type="text" placeholder="Ex: Pennsylvania Station">
+          <input id="search-time" type="button" value="Go">
+        </div>
+        <hr>
+        <div>
+          <input id="search-filter-text" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search">
+          <input id="filter" type="button" value="Filter">
+          <hr>  
+          <ul id="list-view" data-bind="foreach: filteredItems">
+            <li data-bind="text: title, click: $parent.changeItemMarker"></li>
+            <input id="checkInButton" type="button" value="Check In?" data-bind="click: $parent.increaseVisits, visible: clicked() !== true">
+            <hr>
+          </ul>
+        </div>
+        <div>
+          <h3>Yelp Speakeasy Search!</h3>
+          <form id="yelp_form_container">
+            <input type="text" id="city" value="" placeholder="Search your city!">
+            <select id="state_selection" value="" data-bind="foreach: states">
+              <option data-bind="text: abbreviation"></option>
+            </select>
+            <button id="yelp_submit-btn">Let's go!</button>
+          </form>
+        </div>
+        <div>
+          <ul id="yelp_results"></ul>
+        </div>,
+      </div>
+      <div id="map"></div>
     </div><!-- /.container -->
 
-  <script src="js/lib/jquery.min.js"></script>
-  <script src="js/lib/knockout-3.4.0.js"></script>
-  <script src="js/lib/oauth-signature.min.js"></script>
-  <script src="js/app2.js"></script>
-  <script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init">
-  </script>
+    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/lib/knockout-3.4.0.js"></script>
+    <script src="js/lib/oauth-signature.min.js"></script>
+    <script src="js/app2.js"></script>
+    <script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init">
+    </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -75,11 +121,5 @@
     <script src="bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
-
-    <!-- Core JavaScript for everything else -->
-<!--     <script src="js/app2.js"></script>
-    <script src="js/app.js"></script>
- --><!--     <script src="js/lib/knockout-3.4.0.js"></script>
- -->    
   </body>
 </html>
