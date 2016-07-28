@@ -215,7 +215,9 @@ var locations = [
 		placeId: 'ChIJnY19HoFZwokRfs9FwDLVRKw',
 		clicked: ko.observable(false)
 	}
-]	
+]
+
+// var yelpLocations = [];	
 
 var octopus = {
 	init: function() {
@@ -335,10 +337,10 @@ var octopus = {
 				innerHTML += '<br><em>In true speakeasy fashion, no phone number</em>' 
 			}
 			if(marker.rating) {
-				innerHTML += '<br><br>Rating: <img src="' + marker.rating + '">';
+				innerHTML += '<br><br>Rating: <br><img src="' + marker.rating + '">';
 			}
 			if(marker.review) {
-				innerHTML += '<br><br>Review: ' + marker.review;
+				innerHTML += '<br><br>Review: <br><br>' + marker.review;
 			}
 			if(marker.url) {
 				innerHTML += '<br><a href="' + marker.url + '">See all Yelp reviews</a>'			
@@ -360,7 +362,9 @@ var ViewModel = function() {
 	var self = this;
 
 	self.markers = octopus.getMarkers();
+	self.yelpMarkers = octopus.getYelpMarkers();
 	self.locationListItems = ko.observableArray(locations);
+	// self.yelpLocationItems = ko.observableArray(yelpLocations);
 	self.filter = ko.observable('');
 	self.states = ko.observableArray([]);
 
@@ -390,17 +394,33 @@ var ViewModel = function() {
 	}, self);
 
 	self.changeItemMarker = function(clickedLocation) {
+		var infoWindow = new google.maps.InfoWindow();
 		var markers = self.markers;
 		for(var i = 0; i < markers.length; i++) {
 			var marker = markers[i];
+			// console.log(clickedLocation.title);
 
 			if(marker.title === clickedLocation.title) {
-				var infoWindow = new google.maps.InfoWindow();
 				octopus.fillInfoWindow(marker, infoWindow);
 				marker.setAnimation(google.maps.Animation.BOUNCE);
-			}
+			} 
 		}
 	};
+	// self.changeYelpMarker = function(clickedLocation) {
+	// 	var infoWindow = new google.maps.InfoWindow();
+	// 	var yelpMarkers = self.yelpMarkers;
+	// 	console.log(yelpMarkers.length);
+	// 	for(var i = 0; i < yelpMarkers.length; i++) {
+	// 		var yelpMarker = yelpMarkers[i];
+	// 		console.log(clickedLocation.yelpMarkers[0].title);
+
+	// 		if(yelpMarker.title === clickedLocation.yelpMarkers[i].title) {
+	// 			octopus.fillYelpInfoWindow(yelpMarker, infoWindow);
+	// 			yelpMarker.setAnimation(google.maps.Animation.BOUNCE);
+	// 			console.log(yelpMarker.title);
+	// 		}		
+	// 	}
+	// };
 
 	self.visits = ko.observable(0);
 
@@ -471,7 +491,7 @@ var viewMap = {
 				this.setIcon(barIcon);
 			});
 		}
-        document.getElementById('search-within-time').addEventListener('click', function() {
+        document.getElementById('search-time').addEventListener('click', function() {
           searchWithinTime();
         });
 		function hideMarkers(markers) {
@@ -481,7 +501,7 @@ var viewMap = {
 		}
       	function searchWithinTime() {
 	        var distanceMatrixService = new google.maps.DistanceMatrixService;
-	        var address = document.getElementById('search-within-time-text').value;
+	        var address = document.getElementById('search-time-text').value;
 			// Check to make sure the address was inputted
 	        if (address == '') {
 	          	window.alert('You must enter an address.');
@@ -561,7 +581,7 @@ var viewMap = {
 		function displayDirections(origin) {
 	        hideMarkers(markers);
 	        var directionsService = new google.maps.DirectionsService;
-	        var destinationAddress = document.getElementById('search-within-time-text').value;
+	        var destinationAddress = document.getElementById('search-time-text').value;
         	var mode = document.getElementById('mode').value;
         	directionsService.route({
 	        	origin: origin,
@@ -591,6 +611,7 @@ var loadData = function() {
 	var city = $('#city').val(); 
 	var state = $('#state_selection').val(); 
 	var $yelpElem = $('#yelp_results');
+	var $yelpItem = $('#yelpItem');
 	var $yelpForm = $('#yelp_form_container');
 
 	$yelpElem.text("");
@@ -624,7 +645,7 @@ var loadData = function() {
 		dataType: 'jsonp',
 		success: function(results) {
 			var businesses = results.businesses;
-			console.log(businesses[0]);
+			// console.log(businesses[0]);
 			map = new google.maps.Map(document.getElementById('map'), {
 				center: {lat: businesses[0].location.coordinate.latitude, lng: businesses[0].location.coordinate.longitude},
 				zoom: 12,
@@ -635,6 +656,7 @@ var loadData = function() {
 			var yelpMarkers = octopus.getYelpMarkers();
 		    var barIcon = 'img/bar_icon.svg';
 		    var drinkIcon = 'img/drink_icon.svg';
+			// var yelpLocationItems = ko.observableArray([]);
 
 			for(var i = 0; i < businesses.length; i++) {
 				var title = businesses[i].name;
@@ -645,6 +667,11 @@ var loadData = function() {
 				var image = businesses[i].image_url;
 				var review = businesses[i].snippet_text;
 				var url = businesses[i].url;
+
+				// console.log(i);
+
+				// yelpLocations.push({title: title, location: position, clicked: ko.observable(false)});
+				// console.log(yelpLocations);
 
 				var marker = new google.maps.Marker({
 					map: map,
@@ -661,13 +688,25 @@ var loadData = function() {
 					url: url
 				});
 				yelpMarkers.push(marker);
+				yelpMarkers[i] = marker;
 				marker.addListener('click', function() {
 					octopus.fillYelpInfoWindow(this, infoWindow);
 					this.setAnimation(google.maps.Animation.BOUNCE);
 				});
 				bounds.extend(yelpMarkers[i].position);
-				$yelpElem.append('<li>' + title + '</li><hr>');
+				$yelpElem.append('<li id="' + i + '">' + title + '</li><hr>');
 			}
+			document.getElementById('yelp_results').addEventListener('click', function(e) {
+				for(var j = 0; j < businesses.length; j++) {
+					var yelp_marker = yelpMarkers[j];
+					if(e.target.innerHTML === yelp_marker.title) {
+						// console.log(yelp_marker.title);
+						octopus.fillYelpInfoWindow(yelp_marker, infoWindow);
+						yelp_marker.setAnimation(google.maps.Animation.BOUNCE);
+					}
+				}
+					// console.log(e.target.id);
+			});
 		},
 		fail: function() {
 			window.alert('No results found!');
