@@ -43,6 +43,7 @@ hr {
 	text-align: left;
 	width: 340px;
 	overflow: scroll;
+	margin-top: 50px;
 }
 #pano {
 	width: 200px;
