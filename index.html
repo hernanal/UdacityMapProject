@@ -61,23 +61,12 @@
 
     </div><!-- /.container -->
 
-  <script>
-       // TODO: Create a map variable
-       var map;
-
-       // TODO: Complete the following function to initialize the map
-       function initMap() {
-         // TODO: use a constructor to create a new map JS object. You can use the coordinates
-         // we used, 40.7413549, -73.99802439999996 or your own!
-         map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40.4458893, lng: -74.52377100000001},
-          zoom: 13
-         });
-       }
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/knockout-3.4.0.js"></script>
+  <script src="js/lib/oauth-signature.min.js"></script>
+  <script src="js/app2.js"></script>
+  <script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init">
   </script>
-
-   <script async def src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&v=3&callback=initMap"></script>
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
