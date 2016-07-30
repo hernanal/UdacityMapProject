@@ -55,8 +55,8 @@
       </div>
     </nav>
 
-    <div class="container">
-      <div class="options-box">
+    <div class="container_2">
+      <nav class="options-box">
         <h1>Discover an NYC Speakeasy!</h1>
         <hr>
         <h3 data-bind="visible: visits() < locationListItems().length">You've been to <span data-bind="text: visits"></span> out of <span data-bind="text: locationListItems().length"></span> Speakeasys!!</h3>
@@ -103,8 +103,8 @@
         <div>
           <ul id="yelp_results"></ul>
         </div>
-      </div>
-      <div id="map"></div>
+      </nav> <!-- navigation -->
+      <div class="container_2" id="map"></div>
     </div><!-- /.container -->
 
     <script src="js/lib/jquery.min.js"></script>
