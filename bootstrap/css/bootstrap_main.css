@@ -18,22 +18,25 @@ hr {
 	margin: 20px 0 20px 0;
 	border: none;
 }
+li {
+	list-style: none; 
+}
 .container_2 {
 	height: 100%;
 	position: relative;
 	top: 0px;
 }
 .main {
-  padding: 40px 15px;
-  text-align: center;
+	padding: 40px 15px;
+	text-align: center;
 }
 #map {
+	top: 50px;
 	bottom: -50px;
 	height: 100%;
 	left: 342px;
 	position: absolute;
 	right: 0px;
-	width: 72.9%;
 }
 .options-box {
 	background: #fff;
@@ -61,7 +64,7 @@ hr {
 	max-width: 300px;
 	max-height: 200px;
 }
-/*@media screen and (max-width: 900px) {
+@media screen and (max-width: 900px) {
 	.options-box {
 		z-index: 10;
 		position: absolute;
@@ -77,4 +80,35 @@ hr {
 		width: 100%;
 		left: 0px;
 	}
-}*/
+}
+
+@media screen and (min-width: 901px) {
+	#search {
+		display: none;
+	}
+}
+
+@media screen and (min-width: 901px) and (max-width: 950px) {
+	#map {
+		width: 63%;
+	}
+}
+
+@media screen and (min-width: 951px) and (max-width: 1100px) {
+	#map {
+		width: 67.7%;
+	}
+}
+
+@media screen and (min-width: 1277px) and (max-width: 1330px) {
+	#map {
+		width: 72.9%
+	}
+}
+
+@media screen and (min-width: 1331px) and (max-width: 1440px) {
+	#map {
+		width: 76%
+	}
+}
+
