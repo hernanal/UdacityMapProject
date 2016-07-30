@@ -2,7 +2,7 @@
 
 // Google maps API
 
-var map, checkInButton;
+var map, checkInButton, infoWindow;
 
 var model = {
 	visits: 0,
@@ -318,6 +318,7 @@ var octopus = {
 	},
 	fillYelpInfoWindow: function(marker, infowindow) {
 		if(infowindow.marker != marker) {
+			infowindow.setContent('');
 			infowindow.marker = marker;
 			infowindow.addListener('closeclick', function() {
 				infowindow.marker = null;
@@ -394,7 +395,7 @@ var ViewModel = function() {
 	}, self);
 
 	self.changeItemMarker = function(clickedLocation) {
-		var infoWindow = new google.maps.InfoWindow();
+		// var infoWindow = new google.maps.InfoWindow();
 		var markers = self.markers;
 		for(var i = 0; i < markers.length; i++) {
 			var marker = markers[i];
@@ -447,9 +448,9 @@ var viewMap = {
 		});
         // This autocomplete is for use in the search within time entry box.
         var timeAutocomplete = new google.maps.places.Autocomplete(
-            document.getElementById('search-within-time-text'));
+            document.getElementById('search-time-text'));
 		// Render markers with infowindow click events
-		var infoWindow = new google.maps.InfoWindow();
+		infoWindow = new google.maps.InfoWindow();
 		var bounds = new google.maps.LatLngBounds();
 		// var locations = octopus.getLocations();
 		var markers = octopus.getMarkers();
@@ -651,7 +652,7 @@ var loadData = function() {
 				zoom: 12,
 				styles: octopus.getStyles()
 			});
-			var infoWindow = new google.maps.InfoWindow();
+			// var infoWindow = new google.maps.InfoWindow();
 			var bounds = new google.maps.LatLngBounds();
 			var yelpMarkers = octopus.getYelpMarkers();
 		    var barIcon = 'img/bar_icon.svg';
@@ -701,8 +702,10 @@ var loadData = function() {
 					var yelp_marker = yelpMarkers[j];
 					if(e.target.innerHTML === yelp_marker.title) {
 						// console.log(yelp_marker.title);
+						// infoWindow.open(map, yelp_marker);
 						octopus.fillYelpInfoWindow(yelp_marker, infoWindow);
 						yelp_marker.setAnimation(google.maps.Animation.BOUNCE);
+						console.log('test');
 					}
 				}
 					// console.log(e.target.id);
