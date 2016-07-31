@@ -144,6 +144,7 @@ var model = {
 			]
 		}
 	],
+	// Array for default speakeasy locations
 	markers: ko.observableArray([]),
 	yelpMarkers: ko.observableArray([]),
 	states: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
@@ -217,12 +218,9 @@ var locations = [
 	}
 ]
 
-// var yelpLocations = [];	
-
 var octopus = {
 	init: function() {
 		viewMap.init();
-		// viewCommute.init();
 	},
 	getStyles: function() {
 		return model.styles;
@@ -236,19 +234,14 @@ var octopus = {
 	fillInfoWindow: function(marker, infowindow) {
 		// First check to make sure the infowindow is already open
 		if(infowindow.marker != marker) {
-			// Clear the infowindow content to give streetview time to load
-			// infowindow.setContent('');
 			infowindow.marker = marker;
-			// infowindow.open(map, marker);
 			// Clear marker property when window is closed
 			infowindow.addListener('closeclick', function() {
 				infowindow.marker = null;
 				marker.setAnimation(null);
 			});
-			// var streetViewService = new google.maps.StreetViewService();
-			// var radius = 50;
 
-			// Get details about location
+			// Get details about each location
 			var innerHTML;
 			var request = {placeId: marker.placeId};
 			var service = new google.maps.places.PlacesService(map);
@@ -286,36 +279,13 @@ var octopus = {
 					}
 					innerHTML += '</div>';
 					infowindow.setContent(innerHTML);
-					// console.log(innerHTML);
 					infowindow.open(map, marker);
 				}
 			});
-
-			// // If the pano is found, compute position of the streetview image,
-			// // then calculate heading, get the pano and set options
-			// function getStreetView(data, status) {
-			// 	if(status == google.maps.StreetViewStatus.OK) {
-			// 		var nearStreetViewLocation = data.location.latLng;
-			// 		var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-			// 			infowindow.setContent(/*'<div><strong>' + marker.title + '</strong></div>*/innerHTML + '<br><div id="pano"></div>');
-			// 				// <br><div class="info-window">Address: ' + address + '</div><br><div>Phone number: ' + phone + '</div><br><div class="info-window">Hours: ' + hours + '</div>');
-			// 			var panoramaOptions = {
-			// 				position: nearStreetViewLocation,
-			// 				pov: {
-			// 					heading: heading,
-			// 					pitch: 0
-			// 				}
-			// 			};
-			// 			// NEED TO HANDLE POSSIBLE ERROR
-			// 		var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-			// 	} else {
-			// 		innerHTML += '<div>' + marker.title + '</div>' + '<div>No Street View Found</div>';
-			// 	}
-			// }
-			// // Use the streetview to get an image witin 50 meters of the marker
-			// streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		}
 	},
+	// This function will get the details for the yelp list items 
+	// and display them in an info window when the marker or list item is clicked.
 	fillYelpInfoWindow: function(marker, infowindow) {
 		if(infowindow.marker != marker) {
 			infowindow.setContent('');
@@ -354,6 +324,7 @@ var octopus = {
 			infowindow.open(map, marker);
 		}
 	},
+	// This is used to generate a random string per Yelp search. It is required to implement the Yelp API
 	nonce_generator: function() {
 		return (Math.floor(Math.random() * 1e12).toString());
 	}
@@ -365,14 +336,16 @@ var ViewModel = function() {
 	self.markers = octopus.getMarkers();
 	self.yelpMarkers = octopus.getYelpMarkers();
 	self.locationListItems = ko.observableArray(locations);
-	// self.yelpLocationItems = ko.observableArray(yelpLocations);
 	self.filter = ko.observable('');
 	self.states = ko.observableArray([]);
 
+	// For each state in the array push a new object to the 
+	// observable array
 	model.states.forEach(function(state) {
 		self.states().push({abbreviation: state});
 	});
 
+	// This function displays and filters the default locations and their markers
 	self.filteredItems = ko.computed(function() {
 		var filter = self.filter().toLowerCase();
 		if(!filter) {
@@ -394,6 +367,8 @@ var ViewModel = function() {
 		}
 	}, self);
 
+	// This function is used to change the marker and info window that is
+	// displayed depending on the list item that was clicked.
 	self.changeItemMarker = function(clickedLocation) {
 		// var infoWindow = new google.maps.InfoWindow();
 		var markers = self.markers;
@@ -407,21 +382,6 @@ var ViewModel = function() {
 			} 
 		}
 	};
-	// self.changeYelpMarker = function(clickedLocation) {
-	// 	var infoWindow = new google.maps.InfoWindow();
-	// 	var yelpMarkers = self.yelpMarkers;
-	// 	console.log(yelpMarkers.length);
-	// 	for(var i = 0; i < yelpMarkers.length; i++) {
-	// 		var yelpMarker = yelpMarkers[i];
-	// 		console.log(clickedLocation.yelpMarkers[0].title);
-
-	// 		if(yelpMarker.title === clickedLocation.yelpMarkers[i].title) {
-	// 			octopus.fillYelpInfoWindow(yelpMarker, infoWindow);
-	// 			yelpMarker.setAnimation(google.maps.Animation.BOUNCE);
-	// 			console.log(yelpMarker.title);
-	// 		}		
-	// 	}
-	// };
 
 	self.visits = ko.observable(0);
 
@@ -446,13 +406,12 @@ var viewMap = {
 			zoom: 13,
 			styles: octopus.getStyles()
 		});
-        // This autocomplete is for use in the search within time entry box.
+        // This autocomplete is for use in the search time entry box.
         var timeAutocomplete = new google.maps.places.Autocomplete(
             document.getElementById('search-time-text'));
 		// Render markers with infowindow click events
 		infoWindow = new google.maps.InfoWindow();
 		bounds = new google.maps.LatLngBounds();
-		// var locations = octopus.getLocations();
 		var markers = octopus.getMarkers();
 		var barIcon = 'img/bar_icon.svg';
 		var drinkIcon = 'img/drink_icon.svg';
@@ -478,7 +437,6 @@ var viewMap = {
 			markers.push(marker);
 			// Give each marker a onclick event to open an info window
 			marker.addListener('click', function() {
-				// octopus.getLocationDetails(this, infoWindow);
 				octopus.fillInfoWindow(this, infoWindow);
 				this.setAnimation(google.maps.Animation.BOUNCE);
 			});
@@ -492,7 +450,9 @@ var viewMap = {
 				this.setIcon(barIcon);
 			});
 		}
+		// Click event for the 'Show All Listings' button
 		document.getElementById('show-all-listings').addEventListener('click', showAllListings);
+		// Click event for the 'Specific Place' filter
         document.getElementById('search-time').addEventListener('click', function() {
           searchWithinTime();
         });
@@ -508,6 +468,8 @@ var viewMap = {
 				markers[i].setMap(null);
 			}
 		}
+		// This function will return the locations that are within the inputted time, 
+		// based on the inputted travel mode, of the inputted place
       	function searchWithinTime() {
 	        var distanceMatrixService = new google.maps.DistanceMatrixService;
 	        var address = document.getElementById('search-time-text').value;
@@ -561,7 +523,6 @@ var viewMap = {
 						var duration = element.duration.value / 60;
 						var durationText = element.duration.text;
 						if (duration <= maxDuration) {
-							//the origin [i] should = the markers[i]
 							markers[i].setMap(map);
 							atLeastOne = true;
 							// Create infowindow to show distance and duration
@@ -570,7 +531,6 @@ var viewMap = {
 			                    '<div><input type=\"button\" value=\"View Route\" onclick =' +
 			                    '\"displayDirections(&quot;' + origins[i] + '&quot;);\"></input></div>'
 			            	});
-							// console.log(displayDirections(origins[i]));
 							infowindow.open(map, markers[i]);
 							// Tell the app to close the small infowindow when the user
 							// clicks a marker and opens a large infowindow
@@ -616,6 +576,8 @@ var viewMap = {
 	}
 };
 
+// This is where the Yelp AJAX request information is gathered,
+// and implemented in the browser
 var loadData = function() {
 	var city = $('#city').val(); 
 	var state = $('#state_selection').val(); 
@@ -624,8 +586,9 @@ var loadData = function() {
 	var $yelpForm = $('#yelp_form_container');
 
 	$yelpElem.text("");
-	// var yelpMarkers = [];
 
+	// These are the required pieces of information needed
+	// to send a successful request to the Yelp API
 	var yelp_url = 'https://api.yelp.com/v2/search';
 	var yelp_parameters = {
 		location: city + state,
@@ -647,25 +610,23 @@ var loadData = function() {
 	var encodedSignature = oauthSignature.generate('GET', yelp_url, yelp_parameters, yelp_consumerS, yelp_TokenS);
 	yelp_parameters.oauth_signature = encodedSignature;
 
+	// This is where the Yelp request is processed
 	var settings = {
 		url: yelp_url,
 		data: yelp_parameters,
 		cache: true,
 		dataType: 'jsonp',
+		// If the request for information is successful, the following is implemented
 		success: function(results) {
 			var businesses = results.businesses;
-			// console.log(businesses[0]);
 			map = new google.maps.Map(document.getElementById('map'), {
 				center: {lat: businesses[0].location.coordinate.latitude, lng: businesses[0].location.coordinate.longitude},
 				zoom: 12,
 				styles: octopus.getStyles()
 			});
-			// var infoWindow = new google.maps.InfoWindow();
-			// var bounds = new google.maps.LatLngBounds();
 			var yelpMarkers = octopus.getYelpMarkers();
 		    var barIcon = 'img/bar_icon.svg';
 		    var drinkIcon = 'img/drink_icon.svg';
-			// var yelpLocationItems = ko.observableArray([]);
 
 			for(var i = 0; i < businesses.length; i++) {
 				var title = businesses[i].name;
@@ -676,11 +637,6 @@ var loadData = function() {
 				var image = businesses[i].image_url;
 				var review = businesses[i].snippet_text;
 				var url = businesses[i].url;
-
-				// console.log(i);
-
-				// yelpLocations.push({title: title, location: position, clicked: ko.observable(false)});
-				// console.log(yelpLocations);
 
 				var marker = new google.maps.Marker({
 					map: map,
@@ -715,14 +671,11 @@ var loadData = function() {
 				for(var j = 0; j < businesses.length; j++) {
 					var yelp_marker = yelpMarkers[j];
 					if(e.target.innerHTML === yelp_marker.title) {
-						// console.log(yelp_marker.title);
-						// infoWindow.open(map, yelp_marker);
 						octopus.fillYelpInfoWindow(yelp_marker, infoWindow);
 						yelp_marker.setAnimation(google.maps.Animation.BOUNCE);
 						console.log('test');
 					}
 				}
-					// console.log(e.target.id);
 			});
 		},
 		fail: function() {
