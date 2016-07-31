@@ -2,7 +2,7 @@
 
 // Google maps API
 
-var map, checkInButton, infoWindow, bounds;
+var map, infoWindow, bounds;
 
 var model = {
 	visits: 0,
@@ -146,6 +146,7 @@ var model = {
 	],
 	// Array for default speakeasy locations
 	markers: ko.observableArray([]),
+	yelpLocations: [],
 	yelpMarkers: ko.observableArray([]),
 	states: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
 			 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
@@ -227,6 +228,9 @@ var octopus = {
 	},
 	getMarkers: function() {
 		return model.markers();
+	},
+	getYelpLocations: function() {
+		return model.yelpLocations;
 	},
 	getYelpMarkers: function() {
 		return model.yelpMarkers();
@@ -338,6 +342,7 @@ var ViewModel = function() {
 	self.locationListItems = ko.observableArray(locations);
 	self.filter = ko.observable('');
 	self.states = ko.observableArray([]);
+	self.removeButton = ko.observable(true);
 
 	// For each state in the array push a new object to the 
 	// observable array
@@ -391,6 +396,32 @@ var ViewModel = function() {
 			clickedButton.clicked(true);
 		}
 	};
+
+    self.showAllListings = function() {
+    	for (var i = 0; i < self.markers.length; i++) {
+    		self.markers[i].setMap(map);
+    		bounds.extend(self.markers[i].position);
+    	}
+    	map.fitBounds(bounds);
+    }
+
+	self.removeLocations = function() {
+		self.locationListItems.removeAll();
+		for (var i = 0; i < self.markers.length; i++) {
+			self.markers[i].setMap(null);
+		}
+		self.removeButton(false);
+	};
+
+	self.loadYelpResults = function() {
+		if(self.removeButton() === false) {
+			self.loctionListItems = ko.observableArray(octopus.getYelpLocations());
+			self.removeButton(true);
+			console.log(self.removeButton());
+		} else {
+			alert('Press the "Remove Listings" button first!')
+		}
+	}  
 };
 
 ko.applyBindings(new ViewModel());
@@ -412,7 +443,7 @@ var viewMap = {
 		// Render markers with infowindow click events
 		infoWindow = new google.maps.InfoWindow();
 		bounds = new google.maps.LatLngBounds();
-		var markers = octopus.getMarkers();
+		var markers = model.markers();
 		var barIcon = 'img/bar_icon.svg';
 		var drinkIcon = 'img/drink_icon.svg';
 
@@ -450,8 +481,6 @@ var viewMap = {
 				this.setIcon(barIcon);
 			});
 		}
-		// Click event for the 'Show All Listings' button
-		document.getElementById('show-all-listings').addEventListener('click', showAllListings);
 		// Click event for the 'Specific Place' filter
         document.getElementById('search-time').addEventListener('click', function() {
           searchWithinTime();
@@ -581,11 +610,12 @@ var viewMap = {
 var loadData = function() {
 	var city = $('#city').val(); 
 	var state = $('#state_selection').val(); 
-	var $yelpElem = $('#yelp_results');
+	// var $yelpElem = $('#yelp_results');
+	// ViewModel().locationListItems().removeAll();
 	var $yelpItem = $('#yelpItem');
 	var $yelpForm = $('#yelp_form_container');
 
-	$yelpElem.text("");
+	// $yelpElem.text("");
 
 	// These are the required pieces of information needed
 	// to send a successful request to the Yelp API
