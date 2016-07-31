@@ -63,7 +63,8 @@
         <h3 data-bind="visible: visits() < locationListItems().length">You've been to <span data-bind="text: visits"></span> out of <span data-bind="text: locationListItems().length"></span> Speakeasys!!</h3>
         <h2 data-bind="visible: visits() === locationListItems().length">Hurray! You've visited all the Speakeasys!</h2>
         <div>
-          <input type="button" id="show-all-listings" value="Show All Listings">
+          <input type="button" data-bind="click: showAllListings" value="Show All Listings">
+          <input type="button" value="Remove Listings" data-bind="visible: removeButton() === true, click: removeLocations">
           <br>
           <hr>
           <h4><strong>Specific Place Filter</strong></h4>  
@@ -103,7 +104,7 @@
             <select id="state_selection" value="" data-bind="foreach: states">
               <option data-bind="text: abbreviation"></option>
             </select>
-            <button id="yelp_submit-btn">Let's go!</button>
+            <input type="button" value="Let's Go" data-bind="click: loadYelpResults">
           </form>
           <br>
         </div>
