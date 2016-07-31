@@ -63,6 +63,9 @@
         <h3 data-bind="visible: visits() < locationListItems().length">You've been to <span data-bind="text: visits"></span> out of <span data-bind="text: locationListItems().length"></span> Speakeasys!!</h3>
         <h2 data-bind="visible: visits() === locationListItems().length">Hurray! You've visited all the Speakeasys!</h2>
         <div>
+          <input type="button" id="show-all-listings" value="Show All Listings">
+          <br>
+          <hr>  
           <span class="text">Within</span>
           <select id="max-duration">
             <option value="10">10 min</option>
@@ -92,7 +95,8 @@
           </ul>
         </div>
         <div>
-          <h3>Yelp Speakeasy Search!</h3>
+          <h4>Not near NYC? No problem! Search for Speakeasys near you using Yelp!</h4>
+          <hr>
           <form id="yelp_form_container">
             <input type="text" id="city" value="" placeholder="Search your city!">
             <select id="state_selection" value="" data-bind="foreach: states">
@@ -100,6 +104,7 @@
             </select>
             <button id="yelp_submit-btn">Let's go!</button>
           </form>
+          <br>
         </div>
         <div>
           <ul id="yelp_results"></ul>
