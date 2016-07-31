@@ -702,6 +702,12 @@ var loadData = function() {
 					octopus.fillYelpInfoWindow(this, infoWindow);
 					this.setAnimation(google.maps.Animation.BOUNCE);
 				});
+				marker.addListener('mouseover', function() {
+					this.setIcon(drinkIcon);
+				});
+				marker.addListener('mouseout', function() {
+					this.setIcon(barIcon);
+				});
 				bounds.extend(yelpMarkers[i].position);
 				$yelpElem.append('<li id="' + i + '">' + title + '</li><hr>');
 			}
