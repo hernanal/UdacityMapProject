@@ -2,7 +2,7 @@
 
 // Google maps API
 
-var map, checkInButton, infoWindow;
+var map, checkInButton, infoWindow, bounds;
 
 var model = {
 	visits: 0,
@@ -451,7 +451,7 @@ var viewMap = {
             document.getElementById('search-time-text'));
 		// Render markers with infowindow click events
 		infoWindow = new google.maps.InfoWindow();
-		var bounds = new google.maps.LatLngBounds();
+		bounds = new google.maps.LatLngBounds();
 		// var locations = octopus.getLocations();
 		var markers = octopus.getMarkers();
 		var barIcon = 'img/bar_icon.svg';
@@ -492,9 +492,17 @@ var viewMap = {
 				this.setIcon(barIcon);
 			});
 		}
+		document.getElementById('show-all-listings').addEventListener('click', showAllListings);
         document.getElementById('search-time').addEventListener('click', function() {
           searchWithinTime();
         });
+        function showAllListings() {
+        	for (var i = 0; i < markers.length; i++) {
+        		markers[i].setMap(map);
+        		bounds.extend(markers[i].position);
+        	}
+        	map.fitBounds(bounds);
+        }
 		function hideMarkers(markers) {
 			for (var i = 0; i < markers.length; i++) {
 				markers[i].setMap(null);
@@ -653,7 +661,7 @@ var loadData = function() {
 				styles: octopus.getStyles()
 			});
 			// var infoWindow = new google.maps.InfoWindow();
-			var bounds = new google.maps.LatLngBounds();
+			// var bounds = new google.maps.LatLngBounds();
 			var yelpMarkers = octopus.getYelpMarkers();
 		    var barIcon = 'img/bar_icon.svg';
 		    var drinkIcon = 'img/drink_icon.svg';
