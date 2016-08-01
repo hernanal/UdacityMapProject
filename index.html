@@ -58,7 +58,7 @@
 
     <div class="container_2">
       <nav class="options-box">
-        <h1>Discover an NYC Speakeasy!</h1>
+        <h1>Start with an NYC Speakeasy!</h1>
         <hr>
         <h3 data-bind="visible: visits() < locationListItems().length">You've been to <span data-bind="text: visits"></span> out of <span data-bind="text: locationListItems().length"></span> Speakeasys!!</h3>
         <h2 data-bind="visible: visits() === locationListItems().length">Hurray! You've visited all the Speakeasys!</h2>
@@ -67,25 +67,6 @@
           <input type="button" value="Remove Listings" data-bind="visible: removeButton() === true, click: removeLocations">
           <br>
           <hr>
-          <h4><strong>Specific Place Filter</strong></h4>  
-          <span class="text">Within</span>
-          <select id="max-duration">
-            <option value="10">10 min</option>
-            <option value="15">15 min</option>
-            <option value="30">30 min</option>
-            <option value="60">1 hour</option>
-          </select>
-          <select id="mode">
-            <option value="DRIVING">drive</option>
-            <option value="WALKING">walk</option>
-            <option value="BICYCLING">bike</option>
-            <option value="TRANSIT">transit ride</option>
-          </select>
-          <span class="text">of</span>
-          <input id="search-time-text" type="text" placeholder="Ex: Pennsylvania Station">
-          <input id="search-time" type="button" value="Go">
-        </div>
-        <hr>
         <div>
           <input id="search-filter-text" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search">
           <input id="filter" type="button" value="Filter">
@@ -100,7 +81,7 @@
           </center>
         </div>
         <div>
-          <h4><strong>Not near NYC? No problem! Search for Speakeasys near you using Yelp below!</strong></h4>
+          <h4><strong>Not near <span>NYC</span>? No problem! Search for <span>Speakeasys</span> near you using <span>Yelp</span> below!</strong></h4>
           <hr>
           <form id="yelp_form_container">
             <input type="text" id="city" value="" placeholder="Search your city!">

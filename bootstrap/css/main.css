@@ -21,6 +21,9 @@ hr {
 li {
 	list-style: none; 
 }
+span {
+	color: #F39C12;
+}
 .container_2 {
 	height: 100%;
 	position: relative;
