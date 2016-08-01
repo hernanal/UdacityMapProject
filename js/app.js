@@ -145,7 +145,6 @@ var model = {
 	],
 	markers: ko.observableArray([]),
 	yelpLocations: [],
-	city: ko.observable(''),
 	yelpMarkers: ko.observableArray([]),
 	states: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
 			 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
@@ -227,9 +226,6 @@ var octopus = {
 	},
 	getMarkers: function() {
 		return model.markers();
-	},
-	getCity: function() {
-		return model.city();
 	},
 	getYelpLocations: function() {
 		return model.yelpLocations;
@@ -436,17 +432,14 @@ var ViewModel = function() {
 		}
 	};
 
+	// This is where the Yelp AJAX request information is gathered,
+	// and implemented in the browser
 	self.loadData = function() {
 		var city = self.city();
 		// console.log(city); 
 		var state = self.state();
 		// console.log(state); 
-		// var $yelpElem = $('#yelp_results');
 		var yelpLocations = octopus.getYelpLocations();
-		// var $yelpItem = $('#yelpItem');
-		// var $yelpForm = $('#yelp_form_container');
-
-		// $('#list-view').text("");
 
 		// These are the required pieces of information needed
 		// to send a successful request to the Yelp API
@@ -522,9 +515,7 @@ var ViewModel = function() {
 					});
 					octopus.getYelpLocations().push(yelpLocation);
 					// console.log(octopus.getYelpLocations());
-					// yelpMarkers.push(marker);
 					octopus.getMarkers().push(marker);
-					// yelpMarkers[i] = marker;
 					marker.addListener('click', function() {
 						octopus.fillYelpInfoWindow(this, infoWindow);
 						this.setAnimation(google.maps.Animation.BOUNCE);
@@ -621,119 +612,6 @@ var viewMap = {
 	}
 };
 
-// This is where the Yelp AJAX request information is gathered,
-// and implemented in the browser
-// var loadData = function() {
-// 	var city = octopus.getCity();
-// 	console.log(city); 
-// 	var state = $('#state_selection').val(); 
-// 	// var $yelpElem = $('#yelp_results');
-// 	var yelpLocations = octopus.getYelpLocations();
-// 	var $yelpItem = $('#yelpItem');
-// 	var $yelpForm = $('#yelp_form_container');
-
-// 	// $('#list-view').text("");
-
-// 	// These are the required pieces of information needed
-// 	// to send a successful request to the Yelp API
-// 	var yelp_url = 'https://api.yelp.com/v2/search';
-// 	var yelp_parameters = {
-// 		location: city + state,
-// 		term: 'speakeasy',
-// 		limit: 10,
-// 		sort: 2,
-// 		category_filter: 'cocktailbars',
-// 		oauth_consumer_key: 'ZvnJ-cSFo6XqeIfL-lVUsQ',
-// 		oauth_token: '4GHYiXGXLbSjBfr7v8PqSvKbdkb4mBA6',
-// 		oauth_nonce: octopus.nonce_generator(),
-// 		oauth_timestamp: Math.floor(Date.now()/1000),
-// 		oauth_signature_method: 'HMAC-SHA1',
-// 		oauth_version: '1.0',
-// 		callback: 'cb'
-// 	};
-// 	var yelp_consumerS = 'Y54xj9QUSLPpKo69rlGORv621SA';
-// 	var yelp_TokenS = '7LFA0VSnN8t4F_dpv2FhGtlPuzw';
-
-// 	var encodedSignature = oauthSignature.generate('GET', yelp_url, yelp_parameters, yelp_consumerS, yelp_TokenS);
-// 	yelp_parameters.oauth_signature = encodedSignature;
-
-// 	// This is where the Yelp request is processed
-// 	var settings = {
-// 		url: yelp_url,
-// 		data: yelp_parameters,
-// 		cache: true,
-// 		dataType: 'jsonp',
-// 		// If the request for information is successful, the following is implemented
-// 		success: function(results) {
-// 			console.log('Hello?')
-// 			var businesses = results.businesses;
-// 			map = new google.maps.Map(document.getElementById('map'), {
-// 				center: {lat: businesses[0].location.coordinate.latitude, lng: businesses[0].location.coordinate.longitude},
-// 				zoom: 12,
-// 				styles: octopus.getStyles()
-// 			});
-// 			var yelpMarkers = octopus.getMarkers();
-// 		    var barIcon = 'img/bar_icon.svg';
-// 		    var drinkIcon = 'img/drink_icon.svg';
-
-// 			for(var i = 0; i < businesses.length; i++) {
-// 				var title = businesses[i].name;
-// 				var position = {lat: businesses[i].location.coordinate.latitude, lng: businesses[i].location.coordinate.longitude};
-// 				var rating_img = businesses[i].rating_img_url;
-// 				var address = businesses[i].location.display_address;
-// 				var phone = businesses[i].display_phone;
-// 				var image = businesses[i].image_url;
-// 				var review = businesses[i].snippet_text;
-// 				var url = businesses[i].url;
-
-// 				var yelpLocation = {
-// 					title: title,
-// 					location: position,
-// 					clicked: ko.observable(false)
-// 				};
-
-// 				var marker = new google.maps.Marker({
-// 					map: map,
-// 					position: position,
-// 					title: title,
-// 					animation: google.maps.Animation.DROP,
-// 					id: i,
-// 					icon: barIcon,
-// 					rating: rating_img,
-// 					address: address,
-// 					phone: phone,
-// 					image: image,
-// 					review: review,
-// 					url: url
-// 				});
-// 				octopus.getYelpLocations().push(yelpLocation);
-// 				// console.log(octopus.getYelpLocations());
-// 				// yelpMarkers.push(marker);
-// 				octopus.getMarkers().push(marker);
-// 				// yelpMarkers[i] = marker;
-// 				marker.addListener('click', function() {
-// 					octopus.fillYelpInfoWindow(this, infoWindow);
-// 					this.setAnimation(google.maps.Animation.BOUNCE);
-// 				});
-// 				marker.addListener('mouseover', function() {
-// 					this.setIcon(drinkIcon);
-// 				});
-// 				marker.addListener('mouseout', function() {
-// 					this.setIcon(barIcon);
-// 				});
-// 				bounds.extend(yelpMarkers[i].position);
-// 			}
-// 		},
-// 		fail: function() {
-// 			window.alert('No results found!');
-// 		}
-// 	};
-// 	$.ajax(settings);
-
-// 	return false;
-// };
-
-// $('#yelp_form_container').submit(loadData);
 
 	
 	
