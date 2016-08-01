@@ -64,6 +64,17 @@ li {
 	max-width: 300px;
 	max-height: 200px;
 }
+#dropdown-icon {
+	width: 45px;
+	height: 45px;
+	display: block;
+	margin: auto;
+	/*display: none;*/
+	border-radius: 30px;
+}
+#dropdown-icon:hover {
+	background-color: grey;
+}
 @media screen and (max-width: 900px) {
 	.options-box {
 		z-index: 10;
