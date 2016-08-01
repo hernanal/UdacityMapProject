@@ -95,6 +95,9 @@
             <input id="checkInButton" type="button" value="Check In?" data-bind="click: $parent.increaseVisits, visible: clicked() !== true">
             <hr>
           </ul>
+          <center>
+            <img id="dropdown-icon" src="https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_keyboard_arrow_down_48px-128.png" data-bind="click: loadYelpResults">
+          </center>
         </div>
         <div>
           <h4><strong>Not near NYC? No problem! Search for Speakeasys near you using Yelp below!</strong></h4>
@@ -104,7 +107,7 @@
             <select id="state_selection" value="" data-bind="foreach: states">
               <option data-bind="text: abbreviation"></option>
             </select>
-            <input type="button" value="Let's Go" data-bind="click: loadYelpResults">
+            <button>Let's Go</button>
           </form>
           <br>
         </div>
