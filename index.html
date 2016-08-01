@@ -84,16 +84,13 @@
           <h4><strong>Not near <span>NYC</span>? No problem! Search for <span>Speakeasys</span> near you using <span>Yelp</span> below!</strong></h4>
           <hr>
           <form id="yelp_form_container">
-            <input type="text" id="city" value="" placeholder="Search your city!">
-            <select id="state_selection" value="" data-bind="foreach: states">
+            <input type="text" data-bind="value: city" placeholder="Search your city!">
+            <select data-bind="foreach: states, value: state">
               <option data-bind="text: abbreviation"></option>
             </select>
             <button>Let's Go</button>
           </form>
           <br>
-        </div>
-        <div>
-          <ul id="yelp_results"></ul>
         </div>
       </nav> <!-- navigation -->
     </div><!-- /.container -->
