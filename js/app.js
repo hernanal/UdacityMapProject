@@ -528,17 +528,17 @@ var ViewModel = function() {
 					});
 					bounds.extend(yelpMarkers[i].position);
 				}
-			},
-			fail: function() {
-				window.alert('No results found!');
 			}
 		};
-		$.ajax(settings);
+		$.ajax(settings)
+		.fail (function() {
+			alert('No results found!');
+		})
 
 		return false;
 	};
 
-	$('#yelp_form_container').submit(self.loadData);
+	// $('#yelp_form_container').submit(self.loadData);
 };
 
 ko.applyBindings(new ViewModel());
@@ -549,6 +549,13 @@ var viewMap = {
 	},
 	render: function() {
 		// Render map
+		// console.log(map);
+		// if (map === undefined) {
+		// 	alert('Error! Google Maps could not load.')
+		// }
+		// window.onerror = function() {
+		// 	alert('Error! Google Maps could not load.')
+		// }
 		map = new google.maps.Map(document.getElementById('map'), {
 			center: {lat: 40.750568, lng: -73.99351899999999},
 			zoom: 13,
@@ -611,6 +618,9 @@ var viewMap = {
 		map.fitBounds(bounds);
 	}
 };
+window.onerror = function() {
+	alert('Error! API data not found.');
+}
 
 
 	
