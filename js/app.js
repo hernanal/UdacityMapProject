@@ -392,11 +392,12 @@ var ViewModel = function() {
 			var marker = markers[i];
 			// console.log(clickedLocation.title);
 
-			if(marker.title === clickedLocation.title) {
+			if(marker.title === clickedLocation.title &&
+			   marker.placeId !== undefined) {
 				octopus.fillInfoWindow(marker, infoWindow);
 				marker.setAnimation(google.maps.Animation.BOUNCE);
-			}
-			if(marker.placeId === undefined) {
+			} else if(marker.title === clickedLocation.title &&
+					  marker.placeId === undefined) {
 				octopus.fillYelpInfoWindow(marker, infoWindow);
 				marker.setAnimation(google.maps.Animation.BOUNCE);
 			} 
@@ -452,9 +453,6 @@ var viewMap = {
 			zoom: 13,
 			styles: octopus.getStyles()
 		});
-        // This autocomplete is for use in the search time entry box.
-        var timeAutocomplete = new google.maps.places.Autocomplete(
-            document.getElementById('search-time-text'));
 		// Render markers with infowindow click events
 		infoWindow = new google.maps.InfoWindow();
 		bounds = new google.maps.LatLngBounds();
@@ -496,10 +494,6 @@ var viewMap = {
 				this.setIcon(barIcon);
 			});
 		}
-		// Click event for the 'Specific Place' filter
-        document.getElementById('search-time').addEventListener('click', function() {
-          searchWithinTime();
-        });
         function showAllListings() {
         	for (var i = 0; i < markers.length; i++) {
         		markers[i].setMap(map);
@@ -512,109 +506,6 @@ var viewMap = {
 				markers[i].setMap(null);
 			}
 		}
-		// This function will return the locations that are within the inputted time, 
-		// based on the inputted travel mode, of the inputted place
-      	function searchWithinTime() {
-	        var distanceMatrixService = new google.maps.DistanceMatrixService;
-	        var address = document.getElementById('search-time-text').value;
-			// Check to make sure the address was inputted
-	        if (address == '') {
-	          	window.alert('You must enter an address.');
-	        } else {
-				hideMarkers(markers);
-				// Use the distance matrix to calcuate the time it will take
-				// to get to each location from the destination address entered
-				// by the user.
-				var origins = [];
-				for (var i = 0; i < markers.length; i++) {
-				origins[i] = markers[i].position;
-				}
-				var destination = address;
-				var mode = document.getElementById('mode').value;
-				// Now that both the origins and destination are defined, get all the
-				// info for the distances between them.
-				distanceMatrixService.getDistanceMatrix({
-					origins: origins,
-					destinations: [destination],
-					travelMode: google.maps.TravelMode[mode],
-					unitSystem: google.maps.UnitSystem.IMPERIAL,
-				}, function(response, status) {
-					if (status !== google.maps.DistanceMatrixStatus.OK) {
-					  window.alert('Error was: ' + status);
-					} else {
-					  findMarkersWithinTime(response);
-					}
-				});
-	        }
-	    }
-		// This function will go through each response and if the distance 
-		// is less than the value selected, it will show it on the map.
-		function findMarkersWithinTime(response) {
-			var maxDuration = document.getElementById('max-duration').value;
-			var origins = response.originAddresses;
-			var destinations = response.destinationAddresses;
-			// Parse through the respones and get the distance and duration
-			// for each. Then, make sure atleast 1 result was found.
-			var atLeastOne = false;
-			for (var i = 0; i < origins.length; i++) {
-				var results = response.rows[i].elements;
-				for (var j = 0; j < results.length; j++) {
-			    	var element = results[j];
-					if (element.status === "OK") {
-						var distanceText = element.distance.text;
-						// Convert duration value from seconds to minutes
-						// using the value and text
-						var duration = element.duration.value / 60;
-						var durationText = element.duration.text;
-						if (duration <= maxDuration) {
-							markers[i].setMap(map);
-							atLeastOne = true;
-							// Create infowindow to show distance and duration
-							var infowindow = new google.maps.InfoWindow({
-								content: durationText + ' away, ' + distanceText +
-			                    '<div><input type=\"button\" value=\"View Route\" onclick =' +
-			                    '\"displayDirections(&quot;' + origins[i] + '&quot;);\"></input></div>'
-			            	});
-							infowindow.open(map, markers[i]);
-							// Tell the app to close the small infowindow when the user
-							// clicks a marker and opens a large infowindow
-							markers[i].infowindow = infowindow;
-							google.maps.event.addListener(markers[i], 'click', function() {
-						  		this.infowindow.close();
-							});
-						}
-					}
-				}
-			}
-			if (!atLeastOne) {
-		  		window.alert('We could not find any locations within that distance!');
-			}
-		}
-      	// This will show the route on the map when button is clicked.
-		function displayDirections(origin) {
-	        hideMarkers(markers);
-	        var directionsService = new google.maps.DirectionsService;
-	        var destinationAddress = document.getElementById('search-time-text').value;
-        	var mode = document.getElementById('mode').value;
-        	directionsService.route({
-	        	origin: origin,
-				destination: destinationAddress,
-				travelMode: google.maps.TravelMode[mode]
-	        }, function(response, status) {
-	        	if (status === google.maps.DirectionsStatus.OK) {
-					var directionsDisplay = new google.maps.DirectionsRenderer({
-						map: map,
-						directions: response,
-						draggable: true,
-						polylineOptions: {
-						strokeColor: 'orange'
-						}
-    	        	});
-				} else {
-					window.alert('Directions request failed due to ' + status);
-				}
-        	});
-      	}
 		// Extend the boundaries of the map for each marker
 		map.fitBounds(bounds);
 	}
