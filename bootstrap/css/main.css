@@ -1,38 +1,43 @@
-html, body {
+html, 
+body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
 }
-/*body {
-  padding-top: 50px;
-}
-*/h1 {
+
+h1 {
 	color: #F39C12;
 	font-size: 22px;
 	margin: 0 0 10px 0;
 	text-align: center;
 }
+
 hr {
 	background: #D0D7D9;
 	height: 1px;
 	margin: 20px 0 20px 0;
 	border: none;
 }
+
 li {
 	list-style: none; 
 }
+
 span {
 	color: #F39C12;
 }
+
 .container_2 {
 	height: 100%;
 	position: relative;
 	top: 0px;
 }
+
 .main {
 	padding: 40px 15px;
 	text-align: center;
 }
+
 #map {
 	top: 50px;
 	bottom: -50px;
@@ -41,6 +46,7 @@ span {
 	position: absolute;
 	right: 0px;
 }
+
 .options-box {
 	background: #fff;
 	border: 1px solid #999;
@@ -53,31 +59,37 @@ span {
 	overflow: scroll;
 	margin-top: 50px;
 }
+
 #pano {
 	width: 200px;
 	height: 100px;
 }
+
 #search-within-time-text {
 	width: 84%;
 }
+
 .text {
 	font-size: 14px;
 }
+
 .yelpInfoWin {
 	max-width: 300px;
 	max-height: 200px;
 }
+
 #dropdown-icon {
 	width: 45px;
 	height: 45px;
 	display: block;
 	margin: auto;
-	/*display: none;*/
 	border-radius: 30px;
 }
+
 #dropdown-icon:hover {
 	background-color: grey;
 }
+
 .center {
 	position: center;
 }
@@ -90,10 +102,12 @@ span {
 		transform: translate(-340px, 0);
 		transition: transform(0, 0);
 	}
+
 	.options-box.open {
 		-webkit-transform: translate(0, 0);
 		transform: translate(0, 0);
 	}
+	
 	#map {
 		width: 100%;
 		left: 0px;
