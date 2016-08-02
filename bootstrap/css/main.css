@@ -78,6 +78,10 @@ span {
 #dropdown-icon:hover {
 	background-color: grey;
 }
+.center {
+	position: center;
+}
+
 @media screen and (max-width: 900px) {
 	.options-box {
 		z-index: 10;

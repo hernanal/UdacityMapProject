@@ -59,18 +59,22 @@
           <input type="button" value="Remove Listings" data-bind="visible: removeButton() === true, click: removeLocations">
           <br>
           <hr>
+        </div>
         <div>
-          <input id="search-filter-text" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search">
-          <input id="filter" type="button" value="Filter">
+          <input id="search-filter-text" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search Filter">
           <hr>  
           <ul id="list-view" data-bind="foreach: filteredItems">
             <li data-bind="text: title, click: $parent.changeItemMarker"></li>
-            <input id="checkInButton" type="button" value="Check In?" data-bind="click: $parent.increaseVisits, visible: clicked() !== true">
-            <hr>
+            <li>
+              <input id="checkInButton" type="button" value="Check In?" data-bind="click: $parent.increaseVisits, visible: clicked() !== true">
+            </li>
+            <li>
+              <hr>
+            </li>  
           </ul>
-          <center>
-            <img id="dropdown-icon" src="https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_keyboard_arrow_down_48px-128.png" data-bind="click: loadYelpResults">
-          </center>
+          <div class="center">
+            <img id="dropdown-icon" src="https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_keyboard_arrow_down_48px-128.png" data-bind="click: loadYelpResults" alt="Arrow down">
+          </div>
         </div>
         <div>
           <h4><strong>Not near <span>NYC</span>? No problem! Search for <span>Speakeasys</span> near you using <span>Yelp</span> below!</strong></h4>
@@ -78,7 +82,7 @@
           <form id="yelp_form_container" data-bind="submit: loadData">
             <input type="text" data-bind="value: city" placeholder="Search your city!">
             <select data-bind="foreach: states, value: state">
-              <option data-bind="text: abbreviation"></option>
+              <option data-bind="text: abbreviation">Test</option>
             </select>
             <button type="submit">Let's Go</button>
           </form>
@@ -90,7 +94,7 @@
       <div class="container_2" id="map"></div>
     </main>
 
-    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/lib/jquery-3.1.0.min.js"></script>
     <script src="js/lib/knockout-3.4.0.js"></script>
     <script src="js/lib/oauth-signature.min.js"></script>
     <script src="js/app.js"></script>
@@ -108,7 +112,7 @@
         drawer.classList.remove('open');
       });
     </script>
-    <script async def src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init">
+    <script async src="https://maps.googleapis.com/maps/api/js?libraries=places&v=3&key=AIzaSyAkj2EcmBSxz-iZGVRW1ksEvq1MPXtmLvY&callback=octopus.init" onerror="googleErrorHandling()">
     </script>
     <!-- Bootstrap core JavaScript
     ================================================== -->

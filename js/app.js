@@ -350,6 +350,10 @@ var ViewModel = function() {
 		self.states().push({abbreviation: state});
 	});
 
+	self.googleErrorHandling = function() {
+		alert('Google MAP API data not found!')
+	};
+
 	// This function displays and filters the default locations and their markers
 	self.filteredItems = ko.computed(function() {
 		var filter = self.filter().toLowerCase();
@@ -537,8 +541,6 @@ var ViewModel = function() {
 
 		return false;
 	};
-
-	// $('#yelp_form_container').submit(self.loadData);
 };
 
 ko.applyBindings(new ViewModel());
@@ -549,13 +551,6 @@ var viewMap = {
 	},
 	render: function() {
 		// Render map
-		// console.log(map);
-		// if (map === undefined) {
-		// 	alert('Error! Google Maps could not load.')
-		// }
-		// window.onerror = function() {
-		// 	alert('Error! Google Maps could not load.')
-		// }
 		map = new google.maps.Map(document.getElementById('map'), {
 			center: {lat: 40.750568, lng: -73.99351899999999},
 			zoom: 13,
