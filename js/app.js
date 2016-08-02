@@ -474,6 +474,7 @@ var ViewModel = function() {
 			data: yelp_parameters,
 			cache: true,
 			dataType: 'jsonp',
+			timeout: 1000,
 			// If the request for information is successful, the following is implemented
 			success: function(results) {
 				// console.log('Hello?')
